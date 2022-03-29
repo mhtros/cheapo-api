@@ -12,6 +12,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContextService(configuration);
 
+builder.Services.AddIdentityService();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
