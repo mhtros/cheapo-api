@@ -10,5 +10,5 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
-    public DbSet<ApplicationInternalError>? ApplicationInternalErrors { get; set; }
+    public DbSet<ApplicationInternalError> ApplicationInternalErrors { get; set; } = null!;
 }
