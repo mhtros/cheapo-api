@@ -1,4 +1,5 @@
 using Cheapo.Api.Extensions.Services;
+using Cheapo.Api.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -14,6 +15,8 @@ builder.Services.AddSwaggerService();
 builder.Services.AddDbContextService(configuration);
 
 builder.Services.AddIdentityService();
+
+builder.Services.AddDependencyInjectionService();
 
 var app = builder.Build();
 
