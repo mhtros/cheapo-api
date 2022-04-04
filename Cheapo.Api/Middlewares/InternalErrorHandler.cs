@@ -78,8 +78,6 @@ public class InternalErrorHandler
 
     private async Task StoreInternalErrorAsync()
     {
-        if (!_storeToDb && !_storeToFile) return;
-
         if (_storeToDb)
             await _applicationInternalErrors.SaveErrorAsync(_error);
 
