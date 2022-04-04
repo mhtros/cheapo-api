@@ -57,7 +57,6 @@ public class InternalErrorHandler
             {
                 Id = Activity.Current?.Id ?? _context.TraceIdentifier,
                 ErrorMessage = ex.Message,
-                StatusCode = _context.Response.StatusCode,
                 OccurrenceDate = DateTime.UtcNow,
                 RequestHeaders = _context.ExtractHeaders(),
                 RequestBody = await _context.ExtractBodyAsync(),
@@ -79,7 +78,7 @@ public class InternalErrorHandler
 
     private async Task StoreInternalErrorAsync()
     {
-        if (!_storeToDb || !_storeToFile) return;
+        if (!_storeToDb && !_storeToFile) return;
 
         if (_storeToDb)
             await _applicationInternalErrors.SaveErrorAsync(_error);
@@ -116,7 +115,7 @@ public class InternalErrorHandler
 
         var response = new
         {
-            StatusCodes = _error.StatusCode,
+            StatusCodes = _context.Response.StatusCode,
             TraceId = _error.Id,
             Message = _isDevelopment ? "Internal Server Error" : _error.ErrorMessage,
             StackTrace = _isDevelopment ? string.Empty : _error.StackTrace

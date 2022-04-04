@@ -7,9 +7,7 @@ namespace Cheapo.Api.Entities;
 public class ApplicationInternalError
 {
     [Required] public string? Id { get; set; }
-
-    public int StatusCode { get; set; }
-
+    
     public string? ErrorMessage { get; set; }
 
     public DateTime OccurrenceDate { get; set; }
