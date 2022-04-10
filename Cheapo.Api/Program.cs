@@ -16,7 +16,7 @@ builder.Services.AddDbContextService(configuration);
 
 builder.Services.AddIdentityService();
 
-builder.Services.AddDependencyInjectionService();
+builder.Services.AddDependencyInjectionService(configuration);
 
 builder.Services.AddJwtAuthenticationService(configuration);
 

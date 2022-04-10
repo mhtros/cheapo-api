@@ -1,4 +1,5 @@
-﻿using Cheapo.Api.Classes.Repositories;
+﻿using Cheapo.Api.Classes;
+using Cheapo.Api.Classes.Repositories;
 using Cheapo.Api.Classes.Services;
 using Cheapo.Api.Interfaces.Repositories;
 using Cheapo.Api.Interfaces.Services;
@@ -23,5 +24,7 @@ public static class DependencyInjectionRegistrator
 
         // Singleton - lifetime services are created the first time they are requested
         // and then every subsequent request will use the same instance
+        var emailSettings = configuration.GetSection("EmailSettings").Get<EmailSettings>();
+        services.AddSingleton(emailSettings);
     }
 }
