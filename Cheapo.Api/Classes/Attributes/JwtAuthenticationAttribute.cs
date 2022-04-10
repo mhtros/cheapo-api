@@ -48,7 +48,7 @@ public class JwtAuthenticationAttribute : TypeFilterAttribute
             catch (Exception e)
             {
                 context.Result = e is SecurityTokenExpiredException
-                    ? new UnauthorizedObjectResult("EXPIRED_TOKEN")
+                    ? new UnauthorizedObjectResult(Errors.ExpiredToken)
                     : new UnauthorizedResult();
             }
         }
