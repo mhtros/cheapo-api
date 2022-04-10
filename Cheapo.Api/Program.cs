@@ -18,6 +18,8 @@ builder.Services.AddIdentityService();
 
 builder.Services.AddDependencyInjectionService();
 
+builder.Services.AddJwtAuthenticationService(configuration);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -30,6 +32,8 @@ if (app.Environment.IsDevelopment())
 app.UseMiddleware<InternalErrorHandler>();
 
 app.UseHttpsRedirection();
+
+app.UseAuthentication();
 
 app.UseAuthorization();
 
