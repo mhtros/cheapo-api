@@ -87,7 +87,7 @@ public class InternalErrorHandler
 
             var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             var path = Path.Combine(userProfile, "cheapo_logs");
-            var filename = $"log_{DateTime.UtcNow:yy_MM_dd}";
+            var filename = $"log_{DateTime.UtcNow:yy_MM_dd}.txt";
 
             await _fileService.SaveToFileAsync(path, filename, content);
         }
