@@ -12,12 +12,23 @@ public class ThumbnailGenerator : IThumbnailGenerator
     /// <returns>
     ///     The thumbnails base64 string.
     /// </returns>
-    public string Generate(string? imageBase64)
+    public string? Generate(string? imageBase64)
     {
-        if (imageBase64 == null) return string.Empty;
-        
+        if (imageBase64 == null) return null;
+
         var imgBase64 = imageBase64.Replace("data:image/jpeg;base64,", "");
-        using var image = MagickImage.FromBase64(imgBase64);
+
+        IMagickImage<ushort> image;
+
+        try
+        {
+            image = MagickImage.FromBase64(imgBase64);
+        }
+        catch (Exception e)
+        {
+            if (e is FormatException) return null;
+            throw;
+        }
 
         image.Resize(32, 32);
         image.Strip();

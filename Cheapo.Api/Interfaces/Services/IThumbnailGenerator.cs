@@ -9,5 +9,5 @@ public interface IThumbnailGenerator
     /// <returns>
     ///     The thumbnails base64 string.
     /// </returns>
-    public string Generate(string? imageBase64);
+    public string? Generate(string? imageBase64);
 }
