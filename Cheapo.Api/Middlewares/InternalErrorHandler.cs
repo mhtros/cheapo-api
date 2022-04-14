@@ -114,7 +114,6 @@ public class InternalErrorHandler
         var response = new
         {
             StatusCodes = _context.Response.StatusCode,
-            TraceId = _error.Id,
             Message = _isDevelopment ? "Internal Server Error" : _error.ErrorMessage,
             StackTrace = _isDevelopment ? string.Empty : _error.StackTrace
         };
