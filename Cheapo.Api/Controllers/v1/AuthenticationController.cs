@@ -36,7 +36,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Signup(SignupModel model)
     {
         var exists = !string.IsNullOrWhiteSpace((await _userManager.FindByNameAsync(model.Username))?.Id);
-        if (exists) return UnprocessableEntity(new ErrorResponse {Errors = new[] {Errors.UserAlreadyExists}});
+        if (exists) return UnprocessableEntity(new ErrorResponse(new[] {Errors.UserAlreadyExists}));
 
         ApplicationUser user = new()
         {
