@@ -1,0 +1,36 @@
+POST https://localhost:7080/api/v1/authentication/signup HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "",
+  "email": "",
+  "password": "",
+  "confirmPassword": "",
+  "image": null
+}
+
+###
+
+POST https://localhost:7080/api/v1/authentication/signin HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "",
+  "password": ""
+}
+
+###
+
+POST  https://localhost:7080/api/v1/authentication/refresh-token HTTP/1.1
+Content-Type: application/json
+
+{
+    "accessToken": "",
+    "refreshToken": ""
+}
+
+###
+
+POST  https://localhost:7080/api/v1/authentication/revoke/{user_id} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 
