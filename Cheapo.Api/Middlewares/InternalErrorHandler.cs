@@ -109,7 +109,7 @@ public class InternalErrorHandler
     private async Task CreateResponseAsync()
     {
         _context.Response.ContentType = "application/json";
-        _context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        _context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
 
         var response = new
         {
@@ -118,7 +118,7 @@ public class InternalErrorHandler
             StackTrace = _isDevelopment ? string.Empty : _error.StackTrace
         };
 
-        var option = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var option = new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase};
         var json = JsonSerializer.Serialize(response, option);
 
         await _context.Response.WriteAsync(json);

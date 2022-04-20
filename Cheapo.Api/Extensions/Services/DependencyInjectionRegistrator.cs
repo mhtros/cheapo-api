@@ -19,7 +19,7 @@ public static class DependencyInjectionRegistrator
         services.AddTransient<ISaveToFile, SaveToFile>();
         services.AddTransient<IThumbnailGenerator, ThumbnailGenerator>();
         services.AddTransient<IEmailSender, EmailSender>();
-        
+
         // Scoped - lifetime services are created once per request
         services.AddScoped<IApplicationInternalErrorRepository, ApplicationInternalErrorRepository>();
 

@@ -6,7 +6,7 @@ namespace Cheapo.Api.Classes;
 ///     Contains the most important parameters of a jwt that is necessary for security reasons.
 /// </summary>
 public class JwtParameters : IJwtParameters
-{  
+{
     /// <summary>
     ///     The string that will be used as the key to create the token signature.
     ///     Used as argument in the hash function.
