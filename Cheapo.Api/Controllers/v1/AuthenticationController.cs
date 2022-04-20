@@ -70,10 +70,10 @@ public class AuthenticationController : ControllerBase
     }
 
     /// <summary>Confirms the user email.</summary>
-    /// <response code="204">If the email has been successfully confirmed.</response>
+    /// <response code="200">If the email has been successfully confirmed.</response>
     /// <response code="400">If the request url parameters are invalid.</response>
     /// <response code="401">If the user doesn't exists.</response>
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("confirm-email")]
@@ -90,7 +90,11 @@ public class AuthenticationController : ControllerBase
         if (!result.Succeeded)
             return BadRequest(new ErrorResponse(result.Errors.Select(e => e.Description.ToUnderscore())));
 
-        return NoContent();
+        return new ContentResult
+        {
+            ContentType = "text/html",
+            Content = @"<html><h1 style='color: red;'>The Email has confirmed successfully</h1></html>"
+        };
     }
 
     /// <summary>
@@ -198,6 +202,35 @@ public class AuthenticationController : ControllerBase
         user.RefreshTokenValidUntil = null;
 
         await _userManager.UpdateAsync(user);
+
+        return NoContent();
+    }
+
+    /// <summary>Resend user confirmation email.</summary>
+    /// <response code="204">If the confirmation email has been successfully send.</response>
+    /// <response code="401">If the user doesn't exists.</response>
+    /// <response code="502">If the email proxy doesn't sends the email.</response>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status502BadGateway)]
+    [HttpPost("resend-confirmation-email")]
+    public async Task<IActionResult> ResendConfirmationEmail(ConfirmEmailModel model)
+    {
+        if (string.IsNullOrWhiteSpace(model.Email))
+            return Unauthorized();
+
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null) return Unauthorized();
+
+        try
+        {
+            await SendConfirmationEmailAsync(user);
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning("Message: {Message}\nStack Trace: {StackTrade}", e.Message, e.StackTrace);
+            return StatusCode(StatusCodes.Status502BadGateway, new ErrorResponse(new[] {Errors.EmailNotSend}));
+        }
 
         return NoContent();
     }
