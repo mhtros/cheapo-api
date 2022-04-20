@@ -39,7 +39,8 @@ public static class JwtAuthenticationRegistrator
                     ValidateIssuerSigningKey = jwtParameters.ValidateIssuerSigningKey,
                     ValidateIssuer = jwtParameters.ValidateIssuer,
                     ValidateAudience = jwtParameters.ValidateAudience,
-                    ValidateLifetime = jwtParameters.ValidateLifetime
+                    ValidateLifetime = jwtParameters.ValidateLifetime,
+                    ClockSkew = TimeSpan.Zero
                 };
             });
     }
