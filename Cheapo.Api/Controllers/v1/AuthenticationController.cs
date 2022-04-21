@@ -235,6 +235,62 @@ public class AuthenticationController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>Sends email with a reset code.</summary>
+    /// <response code="401">If the user doesn't exists.</response>
+    /// <response code="502">If the email proxy doesn't sends the email.</response>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status502BadGateway)]
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null) return Unauthorized();
+
+        var code = await _userManager.GeneratePasswordResetTokenAsync(user);
+
+        const string subject = "Security alert - Reset password";
+        var content = $"Confirmation code: {code}";
+
+        var message = new EmailMessage(new[] {model.Email}, subject, content);
+
+        try
+        {
+            await _emailSender.SendEmailAsync(message);
+        }
+        catch (Exception e)
+        {
+            _logger.LogWarning("Message: {Message}\nStack Trace: {StackTrade}", e.Message, e.StackTrace);
+            return StatusCode(StatusCodes.Status502BadGateway, new ErrorResponse(new[] {Errors.EmailNotSend}));
+        }
+
+        return NoContent();
+    }
+
+    /// <summary>Reset the user password.</summary>
+    /// <response code="200">If the password has been successfully reset.</response>
+    /// ///
+    /// <response code="400">If reset code is invalid.</response>
+    /// <response code="401">If the user doesn't exists.</response>
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+        if (user == null) return Unauthorized();
+
+        var result = await _userManager.ResetPasswordAsync(user, model.Code, model.Password);
+        if (!result.Succeeded) return BadRequest();
+
+        return new ContentResult
+        {
+            ContentType = "text/html",
+            Content = @"<html><h1 style='color: red;'>The Password has successfully changed!</h1></html>"
+        };
+    }
+
     // HELPING METHODS
 
     private async Task SendConfirmationEmailAsync(ApplicationUser user)

@@ -43,3 +43,24 @@ Content-Type: application/json
 {
   "email": ""
 }
+
+###
+
+POST  https://localhost:7080/api/v1/authentication/forgot-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": ""
+}
+
+###
+
+POST  https://localhost:7080/api/v1/authentication/reset-password HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "",
+  "password": "",
+  "confirmPassword": "",
+  "code": ""
+}
