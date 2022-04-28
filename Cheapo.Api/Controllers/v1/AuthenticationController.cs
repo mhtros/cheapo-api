@@ -20,17 +20,20 @@ public class AuthenticationController : ControllerBase
     private readonly IEmailSender _emailSender;
     private readonly IJwtParameters _jwtParameters;
     private readonly ILogger<AuthenticationController> _logger;
+    private readonly SignInManager<ApplicationUser> _signInManager;
     private readonly IThumbnailGenerator _thumbnailGenerator;
     private readonly UserManager<ApplicationUser> _userManager;
 
     public AuthenticationController(UserManager<ApplicationUser> userManager, IThumbnailGenerator thumbnailGenerator,
-        IEmailSender emailSender, ILogger<AuthenticationController> logger, IJwtParameters jwtParameters)
+        IEmailSender emailSender, ILogger<AuthenticationController> logger, IJwtParameters jwtParameters,
+        SignInManager<ApplicationUser> signInManager)
     {
         _userManager = userManager;
         _thumbnailGenerator = thumbnailGenerator;
         _emailSender = emailSender;
         _logger = logger;
         _jwtParameters = jwtParameters;
+        _signInManager = signInManager;
     }
 
     /// <summary>Registers a new user into the application.</summary>
@@ -110,6 +113,9 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Signin(SigninModel model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
+
+        var canSignIn = await _signInManager.CanSignInAsync(user);
+        if (!canSignIn) return Unauthorized(new ErrorResponse(new[] {Errors.AccountNotVerified}));
 
         var result = await _userManager.CheckPasswordAsync(user, model.Password);
         if (!result) return Unauthorized();
