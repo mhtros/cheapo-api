@@ -34,6 +34,7 @@ public class ApplicationUser : IdentityUser
     {
         var claims = new List<Claim>
         {
+            new("username", UserName),
             new("sub", Id),
             new("email", Email),
             new("image", Image ?? string.Empty)
