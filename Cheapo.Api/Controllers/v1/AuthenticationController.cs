@@ -313,7 +313,7 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPost("change-password")]
+    [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
