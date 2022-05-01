@@ -299,6 +299,36 @@ public class AuthenticationController : ControllerBase
         };
     }
 
+    /// <summary>
+    ///     Change the current password.
+    /// </summary>
+    /// <response code="204">
+    ///     Successfully changes the password with the new.
+    /// </response>
+    /// `
+    /// <response code="400">If code generation logic fails.</response>
+    /// ///
+    /// <response code="401">If the user credentials is wrong.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Unauthorized();
+
+        var authorized = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+        if (!authorized) return Unauthorized();
+
+        var token = await _userManager.GeneratePasswordResetTokenAsync(user);
+        var result = await _userManager.ResetPasswordAsync(user, token, model.NewPassword);
+        if (!result.Succeeded) return BadRequest();
+
+        return NoContent();
+    }
 
     // HELPING METHODS
 

@@ -31,7 +31,7 @@ Content-Type: application/json
 
 ###
 
-POST  https://localhost:7080/api/v1/authentication/revoke/{user_id} HTTP/1.1
+POST  https://localhost:7080/api/v1/authentication/revoke HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer 
 
@@ -63,4 +63,16 @@ Content-Type: application/json
   "password": "",
   "confirmPassword": "",
   "code": ""
+}
+
+###
+
+POST  https://localhost:7080/api/v1/authentication/change-password HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 
+
+{
+  "currentPassword": "",
+  "newPassword": "",
+  "confirmPassword": ""
 }
