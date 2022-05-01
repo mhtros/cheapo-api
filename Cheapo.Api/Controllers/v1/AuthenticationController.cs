@@ -1,4 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using System.Security.Cryptography;
 using Cheapo.Api.Classes;
 using Cheapo.Api.Classes.Attributes;
@@ -195,9 +196,10 @@ public class AuthenticationController : ControllerBase
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [HttpPost("revoke/{userId}")]
-    public async Task<IActionResult> Revoke(string userId)
+    [HttpPost("revoke")]
+    public async Task<IActionResult> Revoke()
     {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null) return BadRequest();
 
@@ -296,6 +298,7 @@ public class AuthenticationController : ControllerBase
             Content = @"<html><h1 style='color: red;'>The Password has successfully changed!</h1></html>"
         };
     }
+
 
     // HELPING METHODS
 
