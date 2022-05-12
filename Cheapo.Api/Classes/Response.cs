@@ -50,6 +50,12 @@ public class Response<T> : IDataResponse<T>, IErrorResponse
         Errors = errors;
     }
 
+    public Response(T? data)
+    {
+        Data = data;
+        Errors = null;
+    }
+
     public T? Data { get; set; }
     public IEnumerable<string?>? Errors { get; set; }
 }
