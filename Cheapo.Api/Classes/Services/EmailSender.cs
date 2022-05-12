@@ -34,7 +34,7 @@ public class EmailSender : IEmailSender
         emailMessage.From.Add(new MailboxAddress(_emailSettings.From, _emailSettings.From));
         emailMessage.To.AddRange(message.To);
         emailMessage.Subject = message.Subject;
-        emailMessage.Body = new TextPart(TextFormat.Text) {Text = message.Content};
+        emailMessage.Body = new TextPart(TextFormat.Text) { Text = message.Content };
 
         return emailMessage;
     }
