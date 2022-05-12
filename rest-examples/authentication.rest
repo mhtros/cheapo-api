@@ -76,3 +76,9 @@ Authorization: Bearer
   "newPassword": "",
   "confirmPassword": ""
 }
+
+###
+
+GET https://localhost:7080/api/v1/authentication/two-factor-authentication-code HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 

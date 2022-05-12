@@ -46,7 +46,7 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Signup(SignupModel model)
     {
         var exists = !string.IsNullOrWhiteSpace((await _userManager.FindByNameAsync(model.Username))?.Id);
-        if (exists) return UnprocessableEntity(new ErrorResponse(new[] {Errors.UserAlreadyExists}));
+        if (exists) return UnprocessableEntity(new ErrorResponse(new[] { Errors.UserAlreadyExists }));
 
         ApplicationUser user = new()
         {
@@ -67,7 +67,7 @@ public class AuthenticationController : ControllerBase
         catch (Exception e)
         {
             _logger.LogWarning("Message: {Message}\nStack Trace: {StackTrade}", e.Message, e.StackTrace);
-            return Ok(new ErrorResponse(new[] {Errors.EmailNotSend}));
+            return Ok(new ErrorResponse(new[] { Errors.EmailNotSend }));
         }
 
         return Ok();
@@ -116,7 +116,7 @@ public class AuthenticationController : ControllerBase
         var user = await _userManager.FindByEmailAsync(model.Email);
 
         var canSignIn = await _signInManager.CanSignInAsync(user);
-        if (!canSignIn) return Unauthorized(new ErrorResponse(new[] {Errors.AccountNotVerified}));
+        if (!canSignIn) return Unauthorized(new ErrorResponse(new[] { Errors.AccountNotVerified }));
 
         var result = await _userManager.CheckPasswordAsync(user, model.Password);
         if (!result) return Unauthorized();
@@ -163,20 +163,20 @@ public class AuthenticationController : ControllerBase
         }
         catch (Exception)
         {
-            return BadRequest(new ErrorResponse(new[] {Errors.InvalidToken}));
+            return BadRequest(new ErrorResponse(new[] { Errors.InvalidToken }));
         }
 
         if (token == null)
-            return BadRequest(new ErrorResponse(new[] {Errors.InvalidToken}));
+            return BadRequest(new ErrorResponse(new[] { Errors.InvalidToken }));
 
         var userId = token.Subject;
         var user = await _userManager.FindByIdAsync(userId);
 
         if (user == null || user.RefreshToken != model.RefreshToken)
-            return BadRequest(new ErrorResponse(new[] {Errors.InvalidToken}));
+            return BadRequest(new ErrorResponse(new[] { Errors.InvalidToken }));
 
         if (user.RefreshTokenValidUntil <= DateTime.UtcNow)
-            return Unauthorized(new ErrorResponse(new[] {Errors.ExpiredRefreshToken}));
+            return Unauthorized(new ErrorResponse(new[] { Errors.ExpiredRefreshToken }));
 
         // Ιf we wanted to keep the user constantly connected we would also renew
         // the refresh token and update the database (see the Signin method)
@@ -237,7 +237,7 @@ public class AuthenticationController : ControllerBase
         catch (Exception e)
         {
             _logger.LogWarning("Message: {Message}\nStack Trace: {StackTrade}", e.Message, e.StackTrace);
-            return StatusCode(StatusCodes.Status502BadGateway, new ErrorResponse(new[] {Errors.EmailNotSend}));
+            return StatusCode(StatusCodes.Status502BadGateway, new ErrorResponse(new[] { Errors.EmailNotSend }));
         }
 
         return NoContent();
@@ -260,7 +260,7 @@ public class AuthenticationController : ControllerBase
         const string subject = "Security alert - Reset password";
         var content = $"Confirmation code: {code}";
 
-        var message = new EmailMessage(new[] {model.Email}, subject, content);
+        var message = new EmailMessage(new[] { model.Email }, subject, content);
 
         try
         {
@@ -269,7 +269,7 @@ public class AuthenticationController : ControllerBase
         catch (Exception e)
         {
             _logger.LogWarning("Message: {Message}\nStack Trace: {StackTrade}", e.Message, e.StackTrace);
-            return StatusCode(StatusCodes.Status502BadGateway, new ErrorResponse(new[] {Errors.EmailNotSend}));
+            return StatusCode(StatusCodes.Status502BadGateway, new ErrorResponse(new[] { Errors.EmailNotSend }));
         }
 
         return NoContent();
@@ -277,7 +277,6 @@ public class AuthenticationController : ControllerBase
 
     /// <summary>Reset the user password.</summary>
     /// <response code="200">If the password has been successfully reset.</response>
-    /// ///
     /// <response code="400">If reset code is invalid.</response>
     /// <response code="401">If the user doesn't exists.</response>
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -305,9 +304,7 @@ public class AuthenticationController : ControllerBase
     /// <response code="204">
     ///     Successfully changes the password with the new.
     /// </response>
-    /// `
     /// <response code="400">If code generation logic fails.</response>
-    /// ///
     /// <response code="401">If the user credentials is wrong.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -330,6 +327,27 @@ public class AuthenticationController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>
+    ///     Generate a new two factor authentication code.
+    /// </summary>
+    /// <response code="200">
+    ///     Successfully generates the two factor authentication code.
+    /// </response>
+    /// <response code="401">If the user credentials is wrong.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("two-factor-authentication-code")]
+    public async Task<IActionResult> TwoFactorAuthenticationCode()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) return Unauthorized();
+
+        var token = _userManager.GenerateNewAuthenticatorKey();
+        return Ok(new Response<string>(token));
+    }
+
     // HELPING METHODS
 
     private async Task SendConfirmationEmailAsync(ApplicationUser user)
@@ -339,13 +357,13 @@ public class AuthenticationController : ControllerBase
         var callbackUrl = Url.Action(
             "ConfirmEmail",
             "Authentication",
-            new {userId = user.Id, code},
+            new { userId = user.Id, code },
             HttpContext.Request.Scheme);
 
         const string subject = "Security alert - Email confirmation";
         var content = $"Click the link to confirm your email: {callbackUrl}";
 
-        var message = new EmailMessage(new[] {user.Email}, subject, content);
+        var message = new EmailMessage(new[] { user.Email }, subject, content);
 
         await _emailSender.SendEmailAsync(message);
     }
