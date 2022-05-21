@@ -84,3 +84,13 @@ Authorization: Bearer
 GET {{base_uri}}/api/v1/authentication/generate-authenticator-key HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer 
+
+###
+
+POST {{base_uri}}/api/v1/authentication/enable-two-factor-authentication HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer 
+
+{
+  "token": ""
+}

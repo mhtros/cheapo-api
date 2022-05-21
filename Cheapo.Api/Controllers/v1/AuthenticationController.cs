@@ -354,6 +354,46 @@ public class AuthenticationController : ControllerBase
         return Ok(new DataResponse<AuthenticatorTokenResponse>(response));
     }
 
+    /// <summary>
+    ///     Enables Two Factor Authentication TOTP (Time-based One-time Password Algorithm).
+    /// </summary>
+    /// <response code="200">
+    ///     Successfully enables Two Factor Authentication.
+    ///     Return recovery keys.
+    /// </response>
+    /// <response code="400">If authenticator token is invalid.</response>
+    /// <response code="401">If the user credentials is wrong.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("enable-two-factor-authentication")]
+    public async Task<IActionResult> EnableTwoFactorAuthentication(EnableTwoFactorModel model)
+    {
+        var user = await FindUserFromAccessTokenAsync();
+        if (user == null) return Unauthorized();
+
+        var isValidCode = await _userManager
+            .VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, model.Token);
+
+        if (!isValidCode)
+            return BadRequest(new ErrorResponse(new[] { Errors.NotValidTwoFactorToken }));
+
+        await _userManager.SetTwoFactorEnabledAsync(user, true);
+
+        const int numberOfKeys = 10;
+        await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, numberOfKeys);
+
+        const string loginProvider = "[AspNetUserStore]";
+        const string tokenName = "RecoveryCodes";
+
+        var response = new RecoveryKeysResponse
+        {
+            RecoveryKeys = await _userManager.GetAuthenticationTokenAsync(user, loginProvider, tokenName)
+        };
+
+        return Ok(new DataResponse<RecoveryKeysResponse>(response));
+    }
+
     // HELPING METHODS
 
     private async Task<ApplicationUser?> FindUserFromAccessTokenAsync()
