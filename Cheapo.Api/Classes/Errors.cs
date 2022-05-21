@@ -8,5 +8,5 @@ public static class Errors
     public const string EmailNotSend = "EMAIL_NOT_SEND";
     public const string InvalidToken = "INVALID_TOKEN";
     public const string AccountNotVerified = "ACCOUNT_NOT_VERIFIED";
-    public const string  NotValidTwoFactorToken = "NOT_VALID_TWO_FACTOR_TOKEN";
+    public const string NotValidTwoFactorToken = "NOT_VALID_TWO_FACTOR_TOKEN";
 }

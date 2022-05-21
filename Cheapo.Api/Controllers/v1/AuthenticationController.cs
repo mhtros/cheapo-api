@@ -164,7 +164,9 @@ public class AuthenticationController : ControllerBase
         }
         else
         {
-            var result = await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, model.Token);
+            var result =
+                await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider,
+                    model.Token);
             if (!result) return Unauthorized();
         }
 
@@ -246,8 +248,7 @@ public class AuthenticationController : ControllerBase
     [HttpPost("revoke")]
     public async Task<IActionResult> Revoke()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await FindUserFromAccessTokenAsync();
         if (user == null) return BadRequest();
 
         if (user.RefreshToken == null || user.RefreshTokenValidUntil == null)
@@ -360,8 +361,7 @@ public class AuthenticationController : ControllerBase
     [HttpPut("change-password")]
     public async Task<IActionResult> ChangePassword(ChangePasswordModel model)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await FindUserFromAccessTokenAsync();
         if (user == null) return Unauthorized();
 
         var authorized = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
