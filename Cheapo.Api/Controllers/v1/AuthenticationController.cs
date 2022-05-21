@@ -122,6 +122,9 @@ public class AuthenticationController : ControllerBase
         var result = await _userManager.CheckPasswordAsync(user, model.Password);
         if (!result) return Unauthorized();
 
+        if (user.TwoFactorEnabled)
+            return Ok(new DataResponse<string>(Messages.TwoFactorAuthenticationEnabled));
+
         var tokens = new TokenModel
         {
             AccessToken = user.GenerateToken(_jwtParameters),
