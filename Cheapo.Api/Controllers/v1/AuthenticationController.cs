@@ -141,6 +141,49 @@ public class AuthenticationController : ControllerBase
     }
 
     /// <summary>
+    ///     Signs in the user to the application using two factor authentication.
+    /// </summary>
+    /// <response code="200">
+    ///     If the user has successfully signed in returns two JSON Web Token (Access, Refresh).
+    /// </response>
+    /// <response code="401">If the user credentials is wrong.</response>
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("two-factor-signin")]
+    public async Task<IActionResult> TwoFactorSignin(TwoFactorSigninModel model)
+    {
+        var user = await _userManager.FindByEmailAsync(model.Email);
+
+        var canSignIn = await _signInManager.CanSignInAsync(user);
+        if (!canSignIn) return Unauthorized(new ErrorResponse(new[] { Errors.AccountNotVerified }));
+
+        if (model.IsRecoveryToken)
+        {
+            var result = await _userManager.RedeemTwoFactorRecoveryCodeAsync(user, model.Token);
+            if (!result.Succeeded) return Unauthorized();
+        }
+        else
+        {
+            var result = await _userManager.VerifyTwoFactorTokenAsync(user, TokenOptions.DefaultAuthenticatorProvider, model.Token);
+            if (!result) return Unauthorized();
+        }
+
+        var tokens = new TokenModel
+        {
+            AccessToken = user.GenerateToken(_jwtParameters),
+            RefreshToken = GenerateRefreshToken()
+        };
+
+        user.RefreshToken = tokens.RefreshToken;
+        user.RefreshTokenValidUntil = DateTime.UtcNow.AddDays(1);
+
+        // Update refresh token
+        await _userManager.UpdateAsync(user);
+
+        return Ok(new DataResponse<TokenModel>(tokens));
+    }
+
+    /// <summary>
     ///     Refresh access token using a refresh token.
     /// </summary>
     /// <response code="200">
