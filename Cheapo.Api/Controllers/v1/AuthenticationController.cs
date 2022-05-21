@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using Cheapo.Api.Classes;
 using Cheapo.Api.Classes.Attributes;
 using Cheapo.Api.Classes.Models;
+using Cheapo.Api.Classes.Responses;
 using Cheapo.Api.Entities;
 using Cheapo.Api.Extensions;
 using Cheapo.Api.Interfaces;
@@ -338,18 +339,24 @@ public class AuthenticationController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpGet("generate-authenticator-key")]
-    public async Task<IActionResult> TwoFactorAuthenticationCode()
+    public async Task<IActionResult> GenerateAuthenticatorKey()
     {
-        var user = await FindUserFromAccessToken();
+        var user = await FindUserFromAccessTokenAsync();
         if (user == null) return Unauthorized();
 
-        var token = _userManager.GenerateNewAuthenticatorKey();
-        return Ok(new DataResponse<string>(token));
+        await _userManager.ResetAuthenticatorKeyAsync(user);
+
+        var response = new AuthenticatorTokenResponse
+        {
+            Token = await _userManager.GetAuthenticatorKeyAsync(user)
+        };
+
+        return Ok(new DataResponse<AuthenticatorTokenResponse>(response));
     }
 
     // HELPING METHODS
 
-    private async Task<ApplicationUser?> FindUserFromAccessToken()
+    private async Task<ApplicationUser?> FindUserFromAccessTokenAsync()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         return await _userManager.FindByIdAsync(userId);
