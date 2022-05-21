@@ -365,6 +365,7 @@ public class AuthenticationController : ControllerBase
     /// <response code="401">If the user credentials is wrong.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [HttpPost("enable-two-factor-authentication")]
     public async Task<IActionResult> EnableTwoFactorAuthentication(EnableTwoFactorModel model)
@@ -379,6 +380,36 @@ public class AuthenticationController : ControllerBase
             return BadRequest(new ErrorResponse(new[] { Errors.NotValidTwoFactorToken }));
 
         await _userManager.SetTwoFactorEnabledAsync(user, true);
+
+        const int numberOfKeys = 10;
+        await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, numberOfKeys);
+
+        const string loginProvider = "[AspNetUserStore]";
+        const string tokenName = "RecoveryCodes";
+
+        var response = new RecoveryKeysResponse
+        {
+            RecoveryKeys = await _userManager.GetAuthenticationTokenAsync(user, loginProvider, tokenName)
+        };
+
+        return Ok(new DataResponse<RecoveryKeysResponse>(response));
+    }
+
+    /// <summary>
+    ///     Reset the two factory authentication recovery codes.
+    /// </summary>
+    /// <response code="200">
+    ///     Successfully resets recovery codes.
+    /// </response>
+    /// <response code="401">If the user credentials is wrong.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpGet("reset-two-factor-recovery-keys")]
+    public async Task<IActionResult> ResetTwoFactorRecoveryKeys()
+    {
+        var user = await FindUserFromAccessTokenAsync();
+        if (user == null) return Unauthorized();
 
         const int numberOfKeys = 10;
         await _userManager.GenerateNewTwoFactorRecoveryCodesAsync(user, numberOfKeys);
