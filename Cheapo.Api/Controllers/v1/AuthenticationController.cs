@@ -442,7 +442,7 @@ public class AuthenticationController : ControllerBase
     }
 
     /// <summary>
-    ///     Reset the two factory authentication recovery keys.
+    ///     Reset the two factor authentication recovery keys.
     /// </summary>
     /// <response code="200">
     ///     Successfully resets recovery keys.
@@ -473,10 +473,10 @@ public class AuthenticationController : ControllerBase
     }
 
     /// <summary>
-    ///     Disables the two factory authentication step.
+    ///     Disables the two factor authentication step.
     /// </summary>
     /// <response code="204">
-    ///     Successfully disables two factory authentication.
+    ///     Successfully disables two factor authentication.
     /// </response>
     /// <response code="401">If the user credentials is wrong.</response>
     [JwtAuthentication]
