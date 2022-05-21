@@ -328,24 +328,23 @@ public class AuthenticationController : ControllerBase
     }
 
     /// <summary>
-    ///     Generate a new two factor authentication code.
+    ///     Generate a new authenticator key.
     /// </summary>
     /// <response code="200">
-    ///     Successfully generates the two factor authentication code.
+    ///     Successfully generates authenticator key.
     /// </response>
     /// <response code="401">If the user credentials is wrong.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("two-factor-authentication-code")]
+    [HttpGet("generate-authenticator-key")]
     public async Task<IActionResult> TwoFactorAuthenticationCode()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var user = await _userManager.FindByIdAsync(userId);
+        var user = await FindUserFromAccessToken();
         if (user == null) return Unauthorized();
 
         var token = _userManager.GenerateNewAuthenticatorKey();
-        return Ok(new Response<string>(token));
+        return Ok(new DataResponse<string>(token));
     }
 
     // HELPING METHODS
