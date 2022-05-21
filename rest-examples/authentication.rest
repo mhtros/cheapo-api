@@ -101,3 +101,9 @@ Authorization: Bearer {{access_token}}
 GET {{base_uri}}/api/v1/authentication/reset-two-factor-recovery-keys HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
+
+###
+
+PUT {{base_uri}}/api/v1/authentication/disable-two-factor-authentication HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}

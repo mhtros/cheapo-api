@@ -396,10 +396,11 @@ public class AuthenticationController : ControllerBase
     }
 
     /// <summary>
-    ///     Reset the two factory authentication recovery codes.
+    ///     Reset the two factory authentication recovery keys.
     /// </summary>
     /// <response code="200">
-    ///     Successfully resets recovery codes.
+    ///     Successfully resets recovery keys.
+    ///     Return recovery keys.
     /// </response>
     /// <response code="401">If the user credentials is wrong.</response>
     [JwtAuthentication]
@@ -423,6 +424,34 @@ public class AuthenticationController : ControllerBase
         };
 
         return Ok(new DataResponse<RecoveryKeysResponse>(response));
+    }
+
+    /// <summary>
+    ///     Disables the two factory authentication step.
+    /// </summary>
+    /// <response code="204">
+    ///     Successfully disables two factory authentication.
+    /// </response>
+    /// <response code="401">If the user credentials is wrong.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPut("disable-two-factor-authentication")]
+    public async Task<IActionResult> DisableTwoFactorAuthentication()
+    {
+        var user = await FindUserFromAccessTokenAsync();
+        if (user == null) return Unauthorized();
+
+        await _userManager.SetTwoFactorEnabledAsync(user, false);
+
+        const string loginProvider = "[AspNetUserStore]";
+        const string recoveryToken = "RecoveryCodes";
+        const string authenticatorToken = "AuthenticatorKey";
+
+        await _userManager.RemoveAuthenticationTokenAsync(user, loginProvider, recoveryToken);
+        await _userManager.RemoveAuthenticationTokenAsync(user, loginProvider, authenticatorToken);
+
+        return NoContent();
     }
 
     // HELPING METHODS
