@@ -350,6 +350,12 @@ public class AuthenticationController : ControllerBase
 
     // HELPING METHODS
 
+    private async Task<ApplicationUser?> FindUserFromAccessToken()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        return await _userManager.FindByIdAsync(userId);
+    }
+
     private async Task SendConfirmationEmailAsync(ApplicationUser user)
     {
         var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
