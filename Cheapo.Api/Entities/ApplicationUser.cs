@@ -37,7 +37,8 @@ public class ApplicationUser : IdentityUser
             new("username", UserName),
             new("sub", Id),
             new("email", Email),
-            new("image", Image ?? string.Empty)
+            new("image", Image ?? string.Empty),
+            new("twoFactorEnabled", TwoFactorEnabled.ToString().ToLower())
         };
 
         var issuer = jwtParameters?.Issuer;
