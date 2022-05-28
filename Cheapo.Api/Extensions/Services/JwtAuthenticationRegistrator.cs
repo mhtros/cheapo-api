@@ -40,7 +40,6 @@ public static class JwtAuthenticationRegistrator
                     ValidateIssuer = jwtParameters.ValidateIssuer,
                     ValidateAudience = jwtParameters.ValidateAudience,
                     ValidateLifetime = jwtParameters.ValidateLifetime,
-                    ClockSkew = TimeSpan.Zero
                 };
             });
     }
