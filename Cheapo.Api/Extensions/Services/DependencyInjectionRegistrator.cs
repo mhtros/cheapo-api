@@ -22,6 +22,7 @@ public static class DependencyInjectionRegistrator
 
         // Scoped - lifetime services are created once per request
         services.AddScoped<IApplicationInternalErrorRepository, ApplicationInternalErrorRepository>();
+        services.AddScoped<IApplicationTransactionCategoriesRepository, ApplicationTransactionCategoriesRepository>();
 
         // Singleton - lifetime services are created the first time they are requested
         // and then every subsequent request will use the same instance
