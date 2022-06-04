@@ -33,7 +33,7 @@ public class PagedList<T> : List<T>
     public static async Task<PagedList<T>> CreateAsync(IQueryable<T> sourceQuery, int pageNumber, int pageSize)
     {
         var count = await sourceQuery.CountAsync();
-        
+
         var items = await sourceQuery
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
