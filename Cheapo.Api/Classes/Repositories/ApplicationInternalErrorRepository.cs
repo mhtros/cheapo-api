@@ -13,10 +13,6 @@ public class ApplicationInternalErrorRepository : IApplicationInternalErrorRepos
         _context = context;
     }
 
-    /// <summary>
-    ///     Save asynchronously a server internal error (500) into the database.
-    /// </summary>
-    /// <param name="error"><see cref="ApplicationInternalError" />.</param>
     public async Task SaveErrorAsync(ApplicationInternalError error)
     {
         await _context.ApplicationInternalErrors.AddAsync(error);
