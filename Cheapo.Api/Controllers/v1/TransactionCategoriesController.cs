@@ -96,6 +96,34 @@ public class TransactionCategoriesController : ControllerBase
             }));
     }
 
+    /// <summary>Deletes a transaction category.</summary>
+    /// <response code="404">Transaction category not exists.</response>
+    /// <response code="422">Record was not removed.</response>
+    /// <response code="204">Successfully remove transaction category.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteTransactionCategory(string id)
+    {
+        var exists = await _transactionCategories.ExistsAsync(id);
+        if (!exists) return NotFound();
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var category = await _transactionCategories.FindById(id);
+
+        if (category == null || !category.BelongTo(userId)) return NotFound();
+
+        //TODO: update all transaction records that have this category to uncategorized. 
+
+        _transactionCategories.Remove(category);
+        var saved = await _transactionCategories.SaveAsync();
+        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] { Errors.EntityNotRemoved }));
+
+        return NoContent();
+    }
+
     // HELPING METHODS
 
     private void AddPagination<T>(PagedList<T>? list)

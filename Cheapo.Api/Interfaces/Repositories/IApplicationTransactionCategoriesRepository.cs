@@ -39,4 +39,19 @@ public interface IApplicationTransactionCategoriesRepository : ISaveable
     ///     Checks if a item already exists on the database table.
     /// </summary>
     public Task<bool> ExistsAsync(TransactionCategoryModel model);
+
+    /// <summary>
+    ///     Checks if a item already exists on the database table.
+    /// </summary>
+    public Task<bool> ExistsAsync(string id);
+
+    /// <summary>
+    ///     Finds the item with the specific id. If not exists return Null.
+    /// </summary>
+    public Task<ApplicationTransactionCategory?> FindById(string id);
+
+    /// <summary>
+    ///     Removes an item from the database table.
+    /// </summary>
+    public void Remove(ApplicationTransactionCategory entity);
 }

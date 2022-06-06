@@ -52,4 +52,19 @@ public class ApplicationTransactionCategoriesRepository : BaseRepository, IAppli
     {
         return await Context.ApplicationTransactionCategories.AnyAsync(x => x.Name == model.Name);
     }
+
+    public async Task<bool> ExistsAsync(string id)
+    {
+        return await Context.ApplicationTransactionCategories.AnyAsync(x => x.Id == id);
+    }
+
+    public async Task<ApplicationTransactionCategory?> FindById(string id)
+    {
+        return await Context.ApplicationTransactionCategories.FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public void Remove(ApplicationTransactionCategory entity)
+    {
+        Context.ApplicationTransactionCategories.Remove(entity);
+    }
 }

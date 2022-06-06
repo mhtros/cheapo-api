@@ -14,4 +14,9 @@ public class ApplicationTransactionCategory : IDistinctable<string>
     public ApplicationUser? User { get; set; }
 
     [Required] public string? Id { get; set; }
+
+    public bool BelongTo(string userId)
+    {
+        return UserId == userId;
+    }
 }

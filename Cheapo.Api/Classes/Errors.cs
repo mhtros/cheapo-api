@@ -12,4 +12,5 @@ public static class Errors
     public const string InvalidQueryParameters = "INVALID_QUERY_PARAMETERS";
     public const string AlreadyExists = "ALREADY_EXISTS";
     public const string EntityNotSaved = "ENTITY_NOT_SAVED";
+    public const string EntityNotRemoved = "ENTITY_NOT_REMOVED";
 }
