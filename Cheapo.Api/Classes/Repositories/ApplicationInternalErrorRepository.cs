@@ -4,18 +4,14 @@ using Cheapo.Api.Interfaces.Repositories;
 
 namespace Cheapo.Api.Classes.Repositories;
 
-public class ApplicationInternalErrorRepository : IApplicationInternalErrorRepository
+public class ApplicationInternalErrorRepository : BaseRepository, IApplicationInternalErrorRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public ApplicationInternalErrorRepository(ApplicationDbContext context)
+    public ApplicationInternalErrorRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
-    public async Task SaveErrorAsync(ApplicationInternalError error)
+    public async Task AddAsync(ApplicationInternalError entity)
     {
-        await _context.ApplicationInternalErrors.AddAsync(error);
-        await _context.SaveChangesAsync();
+        await Context.ApplicationInternalErrors.AddAsync(entity);
     }
 }

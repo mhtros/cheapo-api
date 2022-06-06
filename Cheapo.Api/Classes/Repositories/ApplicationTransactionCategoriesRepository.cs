@@ -2,22 +2,21 @@
 using Cheapo.Api.Classes.Pagination;
 using Cheapo.Api.Classes.Responses;
 using Cheapo.Api.Data;
+using Cheapo.Api.Entities;
 using Cheapo.Api.Interfaces.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cheapo.Api.Classes.Repositories;
 
-public class ApplicationTransactionCategoriesRepository : IApplicationTransactionCategoriesRepository
+public class ApplicationTransactionCategoriesRepository : BaseRepository, IApplicationTransactionCategoriesRepository
 {
-    private readonly ApplicationDbContext _context;
-
-    public ApplicationTransactionCategoriesRepository(ApplicationDbContext context)
+    public ApplicationTransactionCategoriesRepository(ApplicationDbContext context) : base(context)
     {
-        _context = context;
     }
 
     public IQueryable<TransactionCategoriesResponse> GetBaseQuery(string userId, bool userOnly = false)
     {
-        var dbSet = _context.ApplicationTransactionCategories;
+        var dbSet = Context.ApplicationTransactionCategories;
 
         var baseQuery = userOnly
             ? dbSet.Where(tc => tc.UserId == userId)
@@ -42,5 +41,15 @@ public class ApplicationTransactionCategoriesRepository : IApplicationTransactio
     {
         return await PagedList<TransactionCategoriesResponse>.CreateAsync(query, pagingParams.PageNumber,
             pagingParams.PageSize);
+    }
+
+    public async Task AddAsync(ApplicationTransactionCategory entity)
+    {
+        await Context.ApplicationTransactionCategories.AddAsync(entity);
+    }
+
+    public async Task<bool> ExistsAsync(TransactionCategoryModel model)
+    {
+        return await Context.ApplicationTransactionCategories.AnyAsync(x => x.Name == model.Name);
     }
 }
