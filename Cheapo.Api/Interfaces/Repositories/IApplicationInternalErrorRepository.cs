@@ -2,11 +2,10 @@
 
 namespace Cheapo.Api.Interfaces.Repositories;
 
-public interface IApplicationInternalErrorRepository
+public interface IApplicationInternalErrorRepository : ISaveable
 {
     /// <summary>
-    ///     Save asynchronously a server internal error (500) into the database.
+    ///     Adds a new item into the ApplicationInternalErrors table.
     /// </summary>
-    /// <param name="error"><see cref="ApplicationInternalError" />.</param>
-    public Task SaveErrorAsync(ApplicationInternalError error);
+    public Task AddAsync(ApplicationInternalError entity);
 }

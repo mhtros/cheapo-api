@@ -10,4 +10,6 @@ public static class Errors
     public const string AccountNotVerified = "ACCOUNT_NOT_VERIFIED";
     public const string NotValidTwoFactorToken = "NOT_VALID_TWO_FACTOR_TOKEN";
     public const string InvalidQueryParameters = "INVALID_QUERY_PARAMETERS";
+    public const string AlreadyExists = "ALREADY_EXISTS";
+    public const string EntityNotSaved = "ENTITY_NOT_SAVED";
 }

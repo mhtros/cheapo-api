@@ -4,5 +4,5 @@ namespace Cheapo.Api.Classes.Models;
 
 public class TransactionCategoryModel
 {
-    [Required] public string? Name { get; set; }
+    [Required] public string Name { get; set; }
 }

@@ -4,6 +4,7 @@ using Cheapo.Api.Classes.Attributes;
 using Cheapo.Api.Classes.Models;
 using Cheapo.Api.Classes.Pagination;
 using Cheapo.Api.Classes.Responses;
+using Cheapo.Api.Entities;
 using Cheapo.Api.Extensions;
 using Cheapo.Api.Interfaces.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,7 @@ public class TransactionCategoriesController : ControllerBase
         _transactionCategories = transactionCategories;
     }
 
-    /// <summary>
-    ///     Retrieves category transactions records.
-    /// </summary>
+    /// <summary>Retrieves category transactions records.</summary>
     /// <param name="pagingParams">
     ///     <see cref="PaginationModel" />
     /// </param>
@@ -33,9 +32,7 @@ public class TransactionCategoriesController : ControllerBase
     ///     If true then it will return only the categories that the specific user has create.
     ///     Default value: FALSE
     /// </param>
-    /// <response code="200">
-    ///     Retrieves all the category transactions records.
-    /// </response>
+    /// <response code="200">Retrieves all the category transactions records.</response>
     /// <response code="400">If query parameters are invalid.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -60,6 +57,43 @@ public class TransactionCategoriesController : ControllerBase
 
         AddPagination(paginateCategories);
         return Ok(new Response<List<TransactionCategoriesResponse>>(paginateCategories));
+    }
+
+    /// <summary>Create a new transaction category.</summary>
+    /// <response code="409">Transaction category name already exists.</response>
+    /// <response code="422">Record was not saved.</response>
+    /// <response code="201">Successfully create the new transaction category.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [HttpPost]
+    public async Task<IActionResult> CreateTransactionCategory(TransactionCategoryModel model)
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var exists = await _transactionCategories.ExistsAsync(model);
+        if (exists) return Conflict(new ErrorResponse(new[] { Errors.AlreadyExists }));
+
+        var entity = new ApplicationTransactionCategory
+        {
+            Id = Guid.NewGuid().ToString(),
+            Name = model.Name,
+            UserId = userId
+        };
+
+        await _transactionCategories.AddAsync(entity);
+
+        var saved = await _transactionCategories.SaveAsync();
+        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] { Errors.EntityNotSaved }));
+
+        return Created(nameof(CreateTransactionCategory), new DataResponse<TransactionCategoriesResponse>(
+            new TransactionCategoriesResponse
+            {
+                Id = entity.Id,
+                Name = entity.Name,
+                UserId = entity.UserId
+            }));
     }
 
     // HELPING METHODS

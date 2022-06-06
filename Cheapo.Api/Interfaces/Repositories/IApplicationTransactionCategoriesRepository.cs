@@ -1,10 +1,11 @@
 ﻿using Cheapo.Api.Classes.Models;
 using Cheapo.Api.Classes.Pagination;
 using Cheapo.Api.Classes.Responses;
+using Cheapo.Api.Entities;
 
 namespace Cheapo.Api.Interfaces.Repositories;
 
-public interface IApplicationTransactionCategoriesRepository
+public interface IApplicationTransactionCategoriesRepository : ISaveable
 {
     /// <summary>
     ///     Generates query for transaction category records retrieval.
@@ -28,4 +29,14 @@ public interface IApplicationTransactionCategoriesRepository
     /// <param name="pagingParams"><see cref="PaginationModel" />.</param>
     public Task<PagedList<TransactionCategoriesResponse>> GetRecordsAsync(
         IQueryable<TransactionCategoriesResponse> query, PaginationModel pagingParams);
+
+    /// <summary>
+    ///     Adds a new item into the database table.
+    /// </summary>
+    public Task AddAsync(ApplicationTransactionCategory entity);
+
+    /// <summary>
+    ///     Checks if a item already exists on the database table.
+    /// </summary>
+    public Task<bool> ExistsAsync(TransactionCategoryModel model);
 }
