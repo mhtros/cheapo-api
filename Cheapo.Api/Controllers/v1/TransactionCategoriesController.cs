@@ -56,7 +56,7 @@ public class TransactionCategoriesController : ControllerBase
         var paginateCategories = await _transactionCategories.GetRecordsAsync(query, pagingParams);
 
         AddPagination(paginateCategories);
-        return Ok(new Response<List<TransactionCategoriesResponse>>(paginateCategories));
+        return Ok(new DataResponse<List<TransactionCategoriesResponse>>(paginateCategories));
     }
 
     /// <summary>Create a new transaction category.</summary>
@@ -97,11 +97,11 @@ public class TransactionCategoriesController : ControllerBase
     }
 
     /// <summary>Deletes a transaction category.</summary>
-    /// <response code="404">Transaction category not exists.</response>
+    /// <response code="404">Transaction category not found.</response>
     /// <response code="422">Record was not removed.</response>
     /// <response code="204">Successfully remove transaction category.</response>
     [JwtAuthentication]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [HttpDelete("{id}")]
