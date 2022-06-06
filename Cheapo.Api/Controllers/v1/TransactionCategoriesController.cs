@@ -59,6 +59,37 @@ public class TransactionCategoriesController : ControllerBase
         return Ok(new DataResponse<List<TransactionCategoriesResponse>>(paginateCategories));
     }
 
+    /// <summary>Retrieves single transaction category.</summary>
+    /// <response code="200">Retrieves single transaction category.</response>
+    /// <response code="404">Transaction category not found.</response>
+    /// <param name="id">Transaction category identifier.</param>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetSingleTransactionCategory(string id)
+    {
+        var exists = await _transactionCategories.ExistsAsync(id);
+        if (!exists) return NotFound();
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var entity = await _transactionCategories.FindById(id);
+
+        if (entity == null) return NotFound();
+
+        if (!entity.IsPredefined(userId) && !entity.BelongTo(userId))
+            return NotFound();
+
+        var category = new TransactionCategoriesResponse
+        {
+            Id = entity.Id,
+            Name = entity.Name,
+            UserId = entity.UserId
+        };
+
+        return Ok(new DataResponse<TransactionCategoriesResponse>(category));
+    }
+
     /// <summary>Create a new transaction category.</summary>
     /// <response code="409">Transaction category name already exists.</response>
     /// <response code="422">Record was not saved.</response>

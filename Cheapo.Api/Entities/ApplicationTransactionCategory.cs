@@ -19,4 +19,9 @@ public class ApplicationTransactionCategory : IDistinctable<string>
     {
         return UserId == userId;
     }
+
+    public bool IsPredefined(string userId)
+    {
+        return UserId == null;
+    }
 }
