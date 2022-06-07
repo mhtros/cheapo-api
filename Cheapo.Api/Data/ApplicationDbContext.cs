@@ -15,6 +15,8 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<ApplicationTransactionCategory> ApplicationTransactionCategories { get; set; } = null!;
 
+    public DbSet<ApplicationTransaction> ApplicationTransactions { get; set; } = null!;
+
     /// Οn model creating add restrictions, seed data, primary keys or default values.
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

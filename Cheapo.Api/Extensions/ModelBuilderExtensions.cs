@@ -13,6 +13,10 @@ public static class ModelBuilderExtensions
             .Property(b => b.CreatedAt)
             .HasDefaultValueSql("NOW()");
 
+        modelBuilder.Entity<ApplicationTransaction>()
+            .Property(b => b.CreatedAt)
+            .HasDefaultValueSql("NOW()");
+
         return modelBuilder;
     }
 
