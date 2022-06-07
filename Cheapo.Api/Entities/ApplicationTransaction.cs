@@ -8,7 +8,7 @@ public class ApplicationTransaction
 {
     [Required] public string? Id { get; set; }
 
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -18,11 +18,16 @@ public class ApplicationTransaction
 
     [Required] public bool? IsExpense { get; set; }
 
-    [Required] public string? CategoryId { get; set; }
+    [Required] public string CategoryId { get; set; }
 
     public ApplicationTransactionCategory? Category { get; set; }
 
     [Required] public string? UserId { get; set; }
 
     public ApplicationUser? User { get; set; }
+
+    public bool BelongTo(string userId)
+    {
+        return UserId == userId;
+    }
 }

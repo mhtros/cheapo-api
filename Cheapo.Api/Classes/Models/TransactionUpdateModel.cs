@@ -2,7 +2,7 @@
 
 namespace Cheapo.Api.Classes.Models;
 
-public class TransactionModel
+public class TransactionUpdateModel
 {
     [Required]
     [MaxLength(200)]
@@ -21,8 +21,4 @@ public class TransactionModel
     [MaxLength(2000)]
     [Display(Name = "Comments")]
     public string? Comments { get; set; }
-
-    [Required]
-    [Display(Name = "Is Expense")]
-    public bool? IsExpense { get; set; }
 }
