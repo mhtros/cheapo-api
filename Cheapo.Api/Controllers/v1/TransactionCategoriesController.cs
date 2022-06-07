@@ -42,17 +42,12 @@ public class TransactionCategoriesController : ControllerBase
         [FromQuery] string? name, [FromQuery] bool userOnly = false)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        var baseQuery = _transactionCategories.GetBaseQuery(userId, userOnly);
-
-        IQueryable<TransactionCategoriesResponse> filterQuery = null!;
-
-        var hasFilters = !string.IsNullOrWhiteSpace(name);
-        if (hasFilters) filterQuery = _transactionCategories.ApplyFilters(baseQuery, name!);
+        var query = _transactionCategories.GetBaseQuery(userId, userOnly);
+        query = _transactionCategories.ApplyFilters(query, name);
 
         if (pagingParams.PageNumber == 0 || pagingParams.PageSize == 0)
             return BadRequest(new ErrorResponse(new[] { Errors.InvalidQueryParameters }));
 
-        var query = hasFilters ? filterQuery : baseQuery;
         var paginateCategories = await _transactionCategories.GetRecordsAsync(query, pagingParams);
 
         AddPagination(paginateCategories);
@@ -92,7 +87,7 @@ public class TransactionCategoriesController : ControllerBase
 
     /// <summary>Create a new transaction category.</summary>
     /// <response code="409">Transaction category name already exists.</response>
-    /// <response code="422">Record was not saved.</response>
+    /// <response code="422">Transaction category was not saved.</response>
     /// <response code="201">Successfully create the new transaction category.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -129,7 +124,7 @@ public class TransactionCategoriesController : ControllerBase
 
     /// <summary>Deletes a transaction category.</summary>
     /// <response code="404">Transaction category not found.</response>
-    /// <response code="422">Record was not removed.</response>
+    /// <response code="422">Transaction category was not removed.</response>
     /// <response code="204">Successfully remove transaction category.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status404NotFound)]

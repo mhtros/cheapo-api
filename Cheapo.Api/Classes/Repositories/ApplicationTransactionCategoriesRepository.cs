@@ -31,9 +31,12 @@ public class ApplicationTransactionCategoriesRepository : BaseRepository, IAppli
     }
 
     public IQueryable<TransactionCategoriesResponse> ApplyFilters(IQueryable<TransactionCategoriesResponse> query,
-        string name)
+        string? name)
     {
-        return query.Where(x => x.Name.ToLower().Contains(name.ToLower()));
+        if (name != null)
+            query = query.Where(x => x.Name.ToLower().Contains(name.ToLower()));
+
+        return query;
     }
 
     public async Task<PagedList<TransactionCategoriesResponse>> GetRecordsAsync(

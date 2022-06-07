@@ -20,7 +20,7 @@ public interface IApplicationTransactionCategoriesRepository : ISaveable
     /// <param name="query">Query to which the filters will be applied.</param>
     /// <param name="name">Name filter.</param>
     public IQueryable<TransactionCategoriesResponse> ApplyFilters(IQueryable<TransactionCategoriesResponse> query,
-        string name);
+        string? name);
 
     /// <summary>
     ///     Execute the <see cref="IQueryable{T}" /> query and return the result with pagination.
