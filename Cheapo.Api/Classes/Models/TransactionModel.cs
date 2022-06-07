@@ -7,7 +7,7 @@ public class TransactionModel
     [Required]
     [MaxLength(200)]
     [Display(Name = "Description")]
-    public decimal? Description { get; set; }
+    public string? Description { get; set; }
 
     [Required]
     [Display(Name = "Category Id")]
