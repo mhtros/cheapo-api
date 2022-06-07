@@ -1,9 +1,9 @@
-@base_uri = https://localhost:7080
+@base_uri = https://localhost:7080/api/v1
 @access_token = {{signinRequest.response.body.data.accessToken}}
 
 ###
 # @name signinRequest 
-POST {{base_uri}}/api/v1/authentication/signin HTTP/1.1
+POST {{base_uri}}/authentication/signin HTTP/1.1
 Content-Type: application/json
 
 {
@@ -13,13 +13,13 @@ Content-Type: application/json
 
 ###
 
-GET https://localhost:7080/api/v1/transaction-categories?pageSize=10&pageNumber=1 HTTP/1.1
+GET {{base_uri}}/transaction-categories?pageSize=10&pageNumber=1 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ###
 
-POST https://localhost:7080/api/v1/transaction-categories HTTP/1.1
+POST {{base_uri}}/transaction-categories HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
@@ -29,16 +29,14 @@ Authorization: Bearer {{access_token}}
 
 ###
 
-@id = ''
+@id =
 
-DELETE https://localhost:7080/api/v1/transaction-categories/{{id}} HTTP/1.1
+DELETE {{base_uri}}/transaction-categories/{{id}} HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{access_token}}
 
 ###
 
-@id = ''
-
-GET https://localhost:7080/api/v1/transaction-categories/{{id}} HTTP/1.1
+GET {{base_uri}}/transaction-categories/{{id}} HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{access_token}}

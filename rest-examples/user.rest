@@ -1,6 +1,21 @@
-PUT https://localhost:7080/api/v1/user/image HTTP/1.1
+@base_uri = https://localhost:7080/api/v1
+@access_token = {{signinRequest.response.body.data.accessToken}}
+
+###
+# @name signinRequest 
+POST {{base_uri}}/authentication/signin HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer
+
+{
+  "email": "",
+  "password": ""
+}
+
+###
+
+PUT {{base_uri}}/user/image HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
 
 {
   "image": ""
