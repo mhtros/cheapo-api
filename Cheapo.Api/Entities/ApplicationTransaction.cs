@@ -8,6 +8,8 @@ public class ApplicationTransaction
 {
     [Required] public string? Id { get; set; }
 
+    public string? Description { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     [Required] public decimal? Amount { get; set; }
