@@ -12,11 +12,11 @@ public class ApplicationTransaction
 
     public DateTime CreatedAt { get; set; }
 
-    [Required] public decimal? Amount { get; set; }
+    [Required] public decimal Amount { get; set; }
 
     public string? Comments { get; set; }
 
-    [Required] public bool? IsExpense { get; set; }
+    [Required] public bool IsExpense { get; set; }
 
     [Required] public string CategoryId { get; set; }
 

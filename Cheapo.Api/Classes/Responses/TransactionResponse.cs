@@ -8,11 +8,11 @@ public class TransactionResponse
 
     public DateTime CreatedAt { get; set; }
 
-    public decimal? Amount { get; set; }
+    public decimal Amount { get; set; }
 
     public string? Comments { get; set; }
 
-    public bool? IsExpense { get; set; }
+    public bool IsExpense { get; set; }
 
     public string CategoryId { get; set; }
 

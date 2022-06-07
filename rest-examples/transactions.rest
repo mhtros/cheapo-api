@@ -33,6 +33,12 @@ Authorization: Bearer {{access_token}}
 
 ###
 
+GET {{base_uri}}/transactions/balance HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
 @id = 
 
 PUT {{base_uri}}/transactions/{{id}} HTTP/1.1

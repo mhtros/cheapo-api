@@ -86,4 +86,11 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
 
         return query;
     }
+
+    public async Task<decimal> GetBalanceAsync(string userId)
+    {
+        return await Context.ApplicationTransactions
+            .Where(x => x.UserId == userId)
+            .SumAsync(x => x.IsExpense ? -x.Amount : x.Amount);
+    }
 }

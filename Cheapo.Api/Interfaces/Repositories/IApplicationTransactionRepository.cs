@@ -21,6 +21,7 @@ public interface IApplicationTransactionRepository : ISaveable
     /// <param name="amountTo">Max amount filter.</param>
     /// <param name="createdFrom">Min created date filter.</param>
     /// <param name="createdTo">Max created date filter.</param>
+    /// <param name="isExpense">Income or expense filter.</param>
     public IQueryable<TransactionResponse> ApplyFilters(IQueryable<TransactionResponse> query, string? description,
         string? categoryId, decimal? amountFrom, decimal? amountTo, DateTime? createdFrom, DateTime? createdTo,
         bool? isExpense);
@@ -52,4 +53,9 @@ public interface IApplicationTransactionRepository : ISaveable
     ///     Removes an item from the database table.
     /// </summary>
     public void Remove(ApplicationTransaction entity);
+
+    /// <summary>
+    ///     Total amount of money available.
+    /// </summary>
+    public Task<decimal> GetBalanceAsync(string userId);
 }

@@ -24,5 +24,5 @@ public class TransactionModel
 
     [Required]
     [Display(Name = "Is Expense")]
-    public bool? IsExpense { get; set; }
+    public bool IsExpense { get; set; }
 }

@@ -205,6 +205,22 @@ public class TransactionController : ControllerBase
         return NoContent();
     }
 
+    /// <summary>Get user total amount of money available.</summary>
+    /// <response code="401">If the user credentials is wrong.</response>
+    /// <response code="200">Balance.</response>
+    [JwtAuthentication]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [HttpGet("balance")]
+    public async Task<IActionResult> GetBalance()
+    {
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId == null) return Unauthorized();
+
+        var balance = await _transactions.GetBalanceAsync(userId);
+        return Ok(new DataResponse<decimal>(balance));
+    }
+
     // HELPING METHODS
 
     private void AddPagination<T>(PagedList<T>? list)
