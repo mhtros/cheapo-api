@@ -22,9 +22,10 @@ public interface IApplicationTransactionRepository : ISaveable
     /// <param name="createdFrom">Min created date filter.</param>
     /// <param name="createdTo">Max created date filter.</param>
     /// <param name="isExpense">Income or expense filter.</param>
+    /// <param name="ignoreDays">Ignore days on date times comparisons filter.</param>
     public IQueryable<TransactionResponse> ApplyFilters(IQueryable<TransactionResponse> query, string? description,
         string? categoryId, decimal? amountFrom, decimal? amountTo, DateTime? createdFrom, DateTime? createdTo,
-        bool? isExpense);
+        bool? isExpense, bool ignoreDays);
 
     /// <summary>
     ///     Execute the <see cref="IQueryable{T}" /> query and return the result with pagination.

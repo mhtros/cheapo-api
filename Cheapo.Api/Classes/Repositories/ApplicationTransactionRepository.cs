@@ -61,7 +61,7 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
 
     public IQueryable<TransactionResponse> ApplyFilters(IQueryable<TransactionResponse> query, string? description,
         string? categoryId, decimal? amountFrom, decimal? amountTo, DateTime? createdFrom, DateTime? createdTo,
-        bool? isExpense)
+        bool? isExpense, bool ignoreDays)
     {
         if (description != null)
             query = query.Where(x => x.Description.ToLower().Contains(description.ToLower()));
@@ -69,17 +69,37 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
         if (categoryId != null)
             query = query.Where(x => x.CategoryId == categoryId);
 
-        if (amountFrom != null)
+        // only amount from was given
+        if (amountFrom != null && amountTo == null)
             query = query.Where(x => x.Amount >= amountFrom);
 
-        if (amountTo != null)
+        // only amount to was given
+        if (amountTo != null && amountFrom == null)
             query = query.Where(x => x.Amount <= amountTo);
 
-        if (createdFrom != null)
-            query = query.Where(x => x.CreatedAt >= createdFrom);
+        // both amounts (from, to) was given
+        if (createdFrom != null && createdTo != null)
+            query = query.Where(x => x.Amount >= amountFrom && x.Amount <= amountTo);
 
-        if (createdTo != null)
-            query = query.Where(x => x.CreatedAt <= createdTo);
+        // only date from was given
+        if (createdFrom != null && createdTo == null)
+            query = query.Where(x => x.CreatedAt.Date >= createdFrom.Value.Date);
+
+        // only date to was given
+        if (createdTo != null && createdFrom == null)
+            query = query.Where(x => x.CreatedAt.Date <= createdTo.Value.Date);
+
+        // both dates (from, to) was given
+        if (createdFrom != null && createdTo != null)
+            query = query.Where(x =>
+                (ignoreDays
+                    ? x.CreatedAt.Year >= createdFrom.Value.Year && x.CreatedAt.Month >= createdFrom.Value.Month
+                    : x.CreatedAt.Year >= createdFrom.Value.Year && x.CreatedAt.Month >= createdFrom.Value.Month &&
+                      x.CreatedAt.Day >= createdFrom.Value.Day)
+                && (ignoreDays
+                    ? x.CreatedAt.Year <= createdTo.Value.Year && x.CreatedAt.Month <= createdTo.Value.Month
+                    : x.CreatedAt.Year <= createdTo.Value.Year && x.CreatedAt.Month <= createdTo.Value.Month &&
+                      x.CreatedAt.Day <= createdTo.Value.Day));
 
         if (isExpense != null)
             query = query.Where(x => x.IsExpense == isExpense);

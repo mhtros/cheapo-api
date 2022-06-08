@@ -34,6 +34,7 @@ public class TransactionController : ControllerBase
     /// <param name="createdFrom">Shorter date.</param>
     /// <param name="createdTo">Longer date.</param>
     /// <param name="isExpense">If it's income or expense.</param>
+    /// <param name="ignoreDays">Does not take days into account when it comes to date comparision.</param>
     /// <response code="200">Retrieves all the transaction records.</response>
     /// <response code="400">If query parameters are invalid.</response>
     [JwtAuthentication]
@@ -43,13 +44,13 @@ public class TransactionController : ControllerBase
     public async Task<IActionResult> GetTransactions([FromQuery] PaginationModel pagingParams,
         [FromQuery] string? description, [FromQuery] string? categoryId, [FromQuery] decimal? amountFrom,
         [FromQuery] decimal? amountTo, [FromQuery] DateTime? createdFrom, [FromQuery] DateTime? createdTo,
-        [FromQuery] bool? isExpense)
+        [FromQuery] bool? isExpense, [FromQuery] bool ignoreDays)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
         var query = _transactions.GetBaseQuery(userId);
         query = _transactions.ApplyFilters(query, description, categoryId, amountFrom, amountTo, createdFrom,
-            createdTo, isExpense);
+            createdTo, isExpense, ignoreDays);
 
         if (pagingParams.PageNumber == 0 || pagingParams.PageSize == 0)
             return BadRequest(new ErrorResponse(new[] { Errors.InvalidQueryParameters }));
