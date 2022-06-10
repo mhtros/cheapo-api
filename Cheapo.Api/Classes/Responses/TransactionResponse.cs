@@ -14,7 +14,7 @@ public class TransactionResponse
 
     public bool IsExpense { get; set; }
 
-    public string CategoryId { get; set; }
+    public TransactionCategoriesResponse Category { get; set; }
 
     public string? UserId { get; set; }
 }

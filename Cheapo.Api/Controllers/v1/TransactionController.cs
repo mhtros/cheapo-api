@@ -16,11 +16,14 @@ namespace Cheapo.Api.Controllers.v1;
 [Route("api/v{version:apiVersion}/transactions")]
 public class TransactionController : ControllerBase
 {
+    private readonly IApplicationTransactionCategoriesRepository _transactionCategories;
     private readonly IApplicationTransactionRepository _transactions;
 
-    public TransactionController(IApplicationTransactionRepository transactions)
+    public TransactionController(IApplicationTransactionRepository transactions,
+        IApplicationTransactionCategoriesRepository transactionCategories)
     {
         _transactions = transactions;
+        _transactionCategories = transactionCategories;
     }
 
     /// <summary>Retrieves transaction records.</summary>
@@ -85,7 +88,12 @@ public class TransactionController : ControllerBase
             Id = entity.Id,
             Description = entity.Description,
             Amount = entity.Amount,
-            CategoryId = entity.CategoryId,
+            Category = new TransactionCategoriesResponse
+            {
+                Id = entity.Category!.Id,
+                Name = entity.Category.Name,
+                UserId = entity.Category.UserId
+            },
             Comments = entity.Comments,
             IsExpense = entity.IsExpense,
             UserId = entity.UserId,
@@ -97,14 +105,19 @@ public class TransactionController : ControllerBase
 
     /// <summary>Create a new transaction.</summary>
     /// <response code="422">Transaction was not saved.</response>
+    /// <response code="400">Invalid payload.</response>
     /// <response code="201">Successfully create the new transaction.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [HttpPost]
     public async Task<IActionResult> CreateTransaction(TransactionModel model)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        var categoryExists = await _transactionCategories.ExistsAsync(model.CategoryId);
+        if (!categoryExists) return BadRequest();
 
         var entity = new ApplicationTransaction
         {
@@ -112,6 +125,7 @@ public class TransactionController : ControllerBase
             Description = model.Description,
             Amount = model.Amount,
             CategoryId = model.CategoryId,
+            Category = await _transactionCategories.FindById(model.CategoryId),
             Comments = model.Comments,
             IsExpense = model.IsExpense,
             UserId = userId
@@ -128,7 +142,12 @@ public class TransactionController : ControllerBase
                 Id = entity.Id,
                 Description = entity.Description,
                 Amount = entity.Amount,
-                CategoryId = entity.CategoryId,
+                Category = new TransactionCategoriesResponse
+                {
+                    Id = entity.Category!.Id,
+                    Name = entity.Category.Name,
+                    UserId = entity.Category.UserId
+                },
                 Comments = entity.Comments,
                 IsExpense = entity.IsExpense,
                 UserId = entity.UserId,
@@ -138,10 +157,12 @@ public class TransactionController : ControllerBase
 
     /// <summary>Updates a transaction.</summary>
     /// <response code="404">Transaction not found.</response>
+    /// <response code="400">Invalid payload.</response>
     /// <response code="422">Transaction was not saved.</response>
     /// <response code="200">Successfully update the transaction.</response>
     [JwtAuthentication]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status422UnprocessableEntity)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [HttpPut("{id}")]
@@ -149,6 +170,9 @@ public class TransactionController : ControllerBase
     {
         var exists = await _transactions.ExistsAsync(id);
         if (!exists) return NotFound();
+
+        var categoryExists = await _transactionCategories.ExistsAsync(model.CategoryId);
+        if (!categoryExists) return BadRequest();
 
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var entity = await _transactions.FindById(id);
@@ -159,6 +183,7 @@ public class TransactionController : ControllerBase
         entity.Description = model.Description;
         entity.Amount = model.Amount;
         entity.CategoryId = model.CategoryId;
+        entity.Category = await _transactionCategories.FindById(entity.CategoryId);
         entity.Comments = model.Comments;
 
         var saved = await _transactions.SaveAsync();
@@ -169,7 +194,12 @@ public class TransactionController : ControllerBase
             Id = entity.Id,
             Description = entity.Description,
             Amount = entity.Amount,
-            CategoryId = entity.CategoryId,
+            Category = new TransactionCategoriesResponse
+            {
+                Id = entity.Category!.Id,
+                Name = entity.Category.Name,
+                UserId = entity.Category.UserId
+            },
             Comments = entity.Comments,
             IsExpense = entity.IsExpense,
             UserId = entity.UserId,
@@ -216,8 +246,6 @@ public class TransactionController : ControllerBase
     public async Task<IActionResult> GetBalance()
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (userId == null) return Unauthorized();
-
         var balance = await _transactions.GetBalanceAsync(userId);
         return Ok(new DataResponse<decimal>(balance));
     }

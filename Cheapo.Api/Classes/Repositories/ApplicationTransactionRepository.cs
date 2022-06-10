@@ -19,6 +19,7 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
         var dbSet = Context.ApplicationTransactions;
 
         return dbSet
+            .Include(x => x.Category)
             .Where(t => t.UserId == userId)
             .Select(x => new TransactionResponse
             {
@@ -27,7 +28,12 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
                 Description = x.Description,
                 Id = x.Id,
                 CreatedAt = x.CreatedAt,
-                CategoryId = x.CategoryId,
+                Category = new TransactionCategoriesResponse
+                {
+                    Id = x.Category!.Id,
+                    Name = x.Category.Name,
+                    UserId = x.Category.UserId
+                },
                 IsExpense = x.IsExpense,
                 UserId = x.UserId
             });
@@ -67,7 +73,7 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
             query = query.Where(x => x.Description.ToLower().Contains(description.ToLower()));
 
         if (categoryId != null)
-            query = query.Where(x => x.CategoryId == categoryId);
+            query = query.Where(x => x.Category.Id == categoryId);
 
         // only amount from was given
         if (amountFrom != null && amountTo == null)
@@ -78,7 +84,7 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
             query = query.Where(x => x.Amount <= amountTo);
 
         // both amounts (from, to) was given
-        if (createdFrom != null && createdTo != null)
+        if (amountTo != null && amountFrom != null)
             query = query.Where(x => x.Amount >= amountFrom && x.Amount <= amountTo);
 
         // only date from was given
