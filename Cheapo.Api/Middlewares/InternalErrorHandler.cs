@@ -23,7 +23,6 @@ public class InternalErrorHandler
     private readonly bool _storeToDb;
     private readonly bool _storeToFile;
     private IApplicationInternalErrorRepository _applicationInternalErrors = null!;
-    private HttpContext _context = null!;
 
     private ApplicationInternalError _error = new();
 
@@ -40,28 +39,27 @@ public class InternalErrorHandler
 
     public async Task InvokeAsync(HttpContext context, IApplicationInternalErrorRepository applicationInternalErrors)
     {
-        _context = context;
         _applicationInternalErrors = applicationInternalErrors;
 
         try
         {
             // Ensure the request body can be read multiple times.
-            _context.Request.EnableBuffering();
+            context.Request.EnableBuffering();
 
             // Call the next method in the middleware pipeline.
-            await _next(_context);
+            await _next(context);
         }
         catch (Exception ex)
         {
             _error = new ApplicationInternalError
             {
-                Id = Activity.Current?.Id ?? _context.TraceIdentifier,
+                Id = Activity.Current?.Id ?? context.TraceIdentifier,
                 ErrorMessage = ex.Message,
                 OccurrenceDate = DateTime.UtcNow,
-                RequestHeaders = _context.ExtractHeaders(),
-                RequestBody = await _context.ExtractBodyAsync(),
-                ControllerName = _context.Request.Path.ToString(),
-                MethodType = _context.Request.Method,
+                RequestHeaders = context.ExtractHeaders(),
+                RequestBody = await context.ExtractBodyAsync(),
+                ControllerName = context.Request.Path.ToString(),
+                MethodType = context.Request.Method,
                 ExceptionType = ex.GetType().ToString(),
                 StackTrace = ex.StackTrace
             };
@@ -72,7 +70,7 @@ public class InternalErrorHandler
             // The message param is intended to be a format string, you can check that in the method summary. 
             _logger.LogError(ex, "");
 
-            await CreateResponseAsync();
+            await CreateResponseAsync(context);
         }
     }
 
@@ -109,21 +107,21 @@ public class InternalErrorHandler
                + "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
     }
 
-    private async Task CreateResponseAsync()
+    private async Task CreateResponseAsync(HttpContext context)
     {
-        _context.Response.ContentType = "application/json";
-        _context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
 
         var response = new
         {
-            StatusCodes = _context.Response.StatusCode,
+            StatusCodes = context.Response.StatusCode,
             Message = _isDevelopment ? "Internal Server Error" : _error.ErrorMessage,
             StackTrace = _isDevelopment ? string.Empty : _error.StackTrace
         };
 
-        var option = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+        var option = new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase};
         var json = JsonSerializer.Serialize(response, option);
 
-        await _context.Response.WriteAsync(json);
+        await context.Response.WriteAsync(json);
     }
 }
