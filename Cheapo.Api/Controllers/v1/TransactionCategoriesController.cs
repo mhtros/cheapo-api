@@ -46,7 +46,7 @@ public class TransactionCategoriesController : ControllerBase
         query = _transactionCategories.ApplyFilters(query, name);
 
         if (pagingParams.PageNumber == 0 || pagingParams.PageSize == 0)
-            return BadRequest(new ErrorResponse(new[] { Errors.InvalidQueryParameters }));
+            return BadRequest(new ErrorResponse(new[] {Errors.InvalidQueryParameters}));
 
         var paginateCategories = await _transactionCategories.GetRecordsAsync(query, pagingParams);
 
@@ -98,8 +98,8 @@ public class TransactionCategoriesController : ControllerBase
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
-        var exists = await _transactionCategories.ExistsAsync(model);
-        if (exists) return Conflict(new ErrorResponse(new[] { Errors.AlreadyExists }));
+        var exists = await _transactionCategories.ExistsAsync(userId, model);
+        if (exists) return Conflict(new ErrorResponse(new[] {Errors.AlreadyExists}));
 
         var entity = new ApplicationTransactionCategory
         {
@@ -111,7 +111,7 @@ public class TransactionCategoriesController : ControllerBase
         await _transactionCategories.AddAsync(entity);
 
         var saved = await _transactionCategories.SaveAsync();
-        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] { Errors.EntityNotSaved }));
+        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] {Errors.EntityNotSaved}));
 
         return Created(nameof(CreateTransactionCategory), new DataResponse<TransactionCategoriesResponse>(
             new TransactionCategoriesResponse
@@ -145,7 +145,7 @@ public class TransactionCategoriesController : ControllerBase
 
         _transactionCategories.Remove(category);
         var saved = await _transactionCategories.SaveAsync();
-        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] { Errors.EntityNotRemoved }));
+        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] {Errors.EntityNotRemoved}));
 
         return NoContent();
     }

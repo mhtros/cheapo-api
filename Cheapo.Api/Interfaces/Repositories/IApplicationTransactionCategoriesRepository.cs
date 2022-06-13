@@ -41,6 +41,11 @@ public interface IApplicationTransactionCategoriesRepository : ISaveable
     public Task<bool> ExistsAsync(TransactionCategoryModel model);
 
     /// <summary>
+    ///     Checks if a item already exists on the database table for a specific user.
+    /// </summary>
+    public Task<bool> ExistsAsync(string userId, TransactionCategoryModel model);
+
+    /// <summary>
     ///     Checks if a item already exists on the database table.
     /// </summary>
     public Task<bool> ExistsAsync(string id);
