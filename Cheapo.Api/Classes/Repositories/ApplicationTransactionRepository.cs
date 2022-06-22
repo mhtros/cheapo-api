@@ -27,7 +27,7 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
                 Comments = x.Comments,
                 Description = x.Description,
                 Id = x.Id,
-                CreatedAt = x.CreatedAt,
+                TransactionDate = x.TransactionDate.ToDateTime(new TimeOnly()),
                 Category = new TransactionCategoriesResponse
                 {
                     Id = x.Category!.Id,
@@ -57,7 +57,9 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
 
     public async Task<ApplicationTransaction?> FindById(string id)
     {
-        return await Context.ApplicationTransactions.FirstOrDefaultAsync(x => x.Id == id);
+        return await Context.ApplicationTransactions
+            .Include(x => x.Category)
+            .FirstOrDefaultAsync(x => x.Id == id);
     }
 
     public void Remove(ApplicationTransaction entity)
@@ -89,23 +91,26 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
 
         // only date from was given
         if (createdFrom != null && createdTo == null)
-            query = query.Where(x => x.CreatedAt.Date >= createdFrom.Value.Date);
+            query = query.Where(x => x.TransactionDate >= createdFrom.Value.Date);
 
         // only date to was given
         if (createdTo != null && createdFrom == null)
-            query = query.Where(x => x.CreatedAt.Date <= createdTo.Value.Date);
+            query = query.Where(x => x.TransactionDate <= createdTo.Value.Date);
 
         // both dates (from, to) was given
         if (createdFrom != null && createdTo != null)
             query = query.Where(x =>
                 (ignoreDays
-                    ? x.CreatedAt.Year >= createdFrom.Value.Year && x.CreatedAt.Month >= createdFrom.Value.Month
-                    : x.CreatedAt.Year >= createdFrom.Value.Year && x.CreatedAt.Month >= createdFrom.Value.Month &&
-                      x.CreatedAt.Day >= createdFrom.Value.Day)
+                    ? x.TransactionDate.Year >= createdFrom.Value.Year &&
+                      x.TransactionDate.Month >= createdFrom.Value.Month
+                    : x.TransactionDate.Year >= createdFrom.Value.Year &&
+                      x.TransactionDate.Month >= createdFrom.Value.Month &&
+                      x.TransactionDate.Day >= createdFrom.Value.Day)
                 && (ignoreDays
-                    ? x.CreatedAt.Year <= createdTo.Value.Year && x.CreatedAt.Month <= createdTo.Value.Month
-                    : x.CreatedAt.Year <= createdTo.Value.Year && x.CreatedAt.Month <= createdTo.Value.Month &&
-                      x.CreatedAt.Day <= createdTo.Value.Day));
+                    ? x.TransactionDate.Year <= createdTo.Value.Year && x.TransactionDate.Month <= createdTo.Value.Month
+                    : x.TransactionDate.Year <= createdTo.Value.Year &&
+                      x.TransactionDate.Month <= createdTo.Value.Month &&
+                      x.TransactionDate.Day <= createdTo.Value.Day));
 
         if (isExpense != null)
             query = query.Where(x => x.IsExpense == isExpense);

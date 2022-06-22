@@ -56,7 +56,7 @@ public class TransactionController : ControllerBase
             createdTo, isExpense, ignoreDays);
 
         if (pagingParams.PageNumber == 0 || pagingParams.PageSize == 0)
-            return BadRequest(new ErrorResponse(new[] {Errors.InvalidQueryParameters}));
+            return BadRequest(new ErrorResponse(new[] { Errors.InvalidQueryParameters }));
 
         var transactions = await _transactions.GetRecordsAsync(query, pagingParams);
 
@@ -97,7 +97,7 @@ public class TransactionController : ControllerBase
             Comments = entity.Comments,
             IsExpense = entity.IsExpense,
             UserId = entity.UserId,
-            CreatedAt = entity.CreatedAt
+            TransactionDate = entity.TransactionDate.ToDateTime(new TimeOnly())
         };
 
         return Ok(new DataResponse<TransactionResponse>(transaction));
@@ -119,9 +119,15 @@ public class TransactionController : ControllerBase
         var categoryExists = await _transactionCategories.ExistsAsync(model.CategoryId);
         if (!categoryExists) return BadRequest();
 
+        var transactionDate = new DateOnly(
+            model.TransactionDate.Year,
+            model.TransactionDate.Month,
+            model.TransactionDate.Day);
+
         var entity = new ApplicationTransaction
         {
             Id = Guid.NewGuid().ToString(),
+            TransactionDate = transactionDate,
             Description = model.Description,
             Amount = model.Amount,
             CategoryId = model.CategoryId,
@@ -134,7 +140,7 @@ public class TransactionController : ControllerBase
         await _transactions.AddAsync(entity);
         var saved = await _transactions.SaveAsync();
 
-        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] {Errors.EntityNotSaved}));
+        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] { Errors.EntityNotSaved }));
 
         return Created(nameof(CreateTransaction), new DataResponse<TransactionResponse>(
             new TransactionResponse
@@ -151,7 +157,7 @@ public class TransactionController : ControllerBase
                 Comments = entity.Comments,
                 IsExpense = entity.IsExpense,
                 UserId = entity.UserId,
-                CreatedAt = entity.CreatedAt
+                TransactionDate = entity.TransactionDate.ToDateTime(new TimeOnly())
             }));
     }
 
@@ -187,7 +193,7 @@ public class TransactionController : ControllerBase
         entity.Comments = model.Comments;
 
         var saved = await _transactions.SaveAsync();
-        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] {Errors.EntityNotUpdated}));
+        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] { Errors.EntityNotUpdated }));
 
         var transaction = new TransactionResponse
         {
@@ -203,7 +209,7 @@ public class TransactionController : ControllerBase
             Comments = entity.Comments,
             IsExpense = entity.IsExpense,
             UserId = entity.UserId,
-            CreatedAt = entity.CreatedAt
+            TransactionDate = entity.TransactionDate.ToDateTime(new TimeOnly())
         };
 
         return Ok(new DataResponse<TransactionResponse>(transaction));
@@ -231,7 +237,7 @@ public class TransactionController : ControllerBase
 
         _transactions.Remove(transaction);
         var saved = await _transactions.SaveAsync();
-        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] {Errors.EntityNotRemoved}));
+        if (!saved) return UnprocessableEntity(new ErrorResponse(new[] { Errors.EntityNotRemoved }));
 
         return NoContent();
     }

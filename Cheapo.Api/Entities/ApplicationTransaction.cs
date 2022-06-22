@@ -20,6 +20,8 @@ public class ApplicationTransaction
 
     [Required] public string CategoryId { get; set; }
 
+    [Required] public DateOnly TransactionDate { get; set; }
+
     public ApplicationTransactionCategory? Category { get; set; }
 
     [Required] public string? UserId { get; set; }

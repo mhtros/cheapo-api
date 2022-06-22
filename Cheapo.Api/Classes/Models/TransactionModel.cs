@@ -10,6 +10,10 @@ public class TransactionModel
     public string Description { get; set; }
 
     [Required]
+    [Display(Name = "Transaction Date")]
+    public DateTime TransactionDate { get; set; }
+
+    [Required]
     [Display(Name = "Category Id")]
     public string CategoryId { get; set; }
 
