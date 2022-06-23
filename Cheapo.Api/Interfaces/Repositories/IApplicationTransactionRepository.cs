@@ -56,6 +56,11 @@ public interface IApplicationTransactionRepository : ISaveable
     public void Remove(ApplicationTransaction entity);
 
     /// <summary>
+    ///     Removes all transaction of a specific user.
+    /// </summary>
+    public void UserRemoveAll(string userId);
+
+    /// <summary>
     ///     Total amount of money available.
     /// </summary>
     public Task<decimal> GetBalanceAsync(string userId);

@@ -59,4 +59,9 @@ public interface IApplicationTransactionCategoriesRepository : ISaveable
     ///     Removes an item from the database table.
     /// </summary>
     public void Remove(ApplicationTransactionCategory entity);
+
+    /// <summary>
+    ///     Removes all transaction of a specific user.
+    /// </summary>
+    public void UserRemoveAll(string userId);
 }

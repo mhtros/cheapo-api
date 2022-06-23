@@ -20,3 +20,23 @@ Authorization: Bearer {{access_token}}
 {
   "image": ""
 }
+
+###
+
+GET {{base_uri}}/user HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+GET {{base_uri}}/user/delete-token HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}
+
+###
+
+@deleteToken = 
+
+DELETE {{base_uri}}/user/{{deleteToken}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}

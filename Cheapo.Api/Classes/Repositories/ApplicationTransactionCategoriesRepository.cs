@@ -76,4 +76,10 @@ public class ApplicationTransactionCategoriesRepository : BaseRepository, IAppli
     {
         Context.ApplicationTransactionCategories.Remove(entity);
     }
+
+    public void UserRemoveAll(string userId)
+    {
+        var categoriesToRemove = Context.ApplicationTransactionCategories.Where(x => x.UserId == userId);
+        Context.ApplicationTransactionCategories.RemoveRange(categoriesToRemove);
+    }
 }

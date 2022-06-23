@@ -67,6 +67,12 @@ public class ApplicationTransactionRepository : BaseRepository, IApplicationTran
         Context.ApplicationTransactions.Remove(entity);
     }
 
+    public void UserRemoveAll(string userId)
+    {
+        var transactionsToRemove = Context.ApplicationTransactions.Where(x => x.UserId == userId);
+        Context.ApplicationTransactions.RemoveRange(transactionsToRemove);
+    }
+
     public IQueryable<TransactionResponse> ApplyFilters(IQueryable<TransactionResponse> query, string? description,
         string? categoryId, decimal? amountFrom, decimal? amountTo, DateTime? createdFrom, DateTime? createdTo,
         bool? isExpense, bool ignoreDays)
