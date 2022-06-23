@@ -115,12 +115,21 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> Signin(SigninModel model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
+        bool canSignIn;
 
-        var canSignIn = await _signInManager.CanSignInAsync(user);
+        try
+        {
+            canSignIn = await _signInManager.CanSignInAsync(user);
+        }
+        catch
+        {
+            return Unauthorized(new ErrorResponse(new[] { Errors.IncorrectUsernameOrPassword }));
+        }
+
         if (!canSignIn) return Unauthorized(new ErrorResponse(new[] { Errors.AccountNotVerified }));
 
         var result = await _userManager.CheckPasswordAsync(user, model.Password);
-        if (!result) return Unauthorized();
+        if (!result) return Unauthorized(new ErrorResponse(new[] { Errors.IncorrectUsernameOrPassword }));
 
         if (user.TwoFactorEnabled)
             return Ok(new DataResponse<string>(Messages.TwoFactorAuthenticationEnabled));
@@ -153,8 +162,17 @@ public class AuthenticationController : ControllerBase
     public async Task<IActionResult> TwoFactorSignin(TwoFactorSigninModel model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
+        bool canSignIn;
 
-        var canSignIn = await _signInManager.CanSignInAsync(user);
+        try
+        {
+            canSignIn = await _signInManager.CanSignInAsync(user);
+        }
+        catch
+        {
+            return Unauthorized(new ErrorResponse(new[] { Errors.IncorrectUsernameOrPassword }));
+        }
+
         if (!canSignIn) return Unauthorized(new ErrorResponse(new[] { Errors.AccountNotVerified }));
 
         if (model.IsRecoveryToken)

@@ -58,7 +58,8 @@ public class ApplicationTransactionCategoriesRepository : BaseRepository, IAppli
 
     public async Task<bool> ExistsAsync(string userId, TransactionCategoryModel model)
     {
-        return await Context.ApplicationTransactionCategories.AnyAsync(x => x.Name == model.Name && x.UserId == userId);
+        return await Context.ApplicationTransactionCategories.AnyAsync(x =>
+            x.Name == model.Name && (x.UserId == userId || x.User == null));
     }
 
     public async Task<bool> ExistsAsync(string id)

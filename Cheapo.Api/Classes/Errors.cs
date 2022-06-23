@@ -15,4 +15,5 @@ public static class Errors
     public const string EntityNotRemoved = "ENTITY_NOT_REMOVED";
     public const string EntityNotUpdated = "ENTITY_NOT_UPDATED";
     public const string InvalidPeriods = "INVALID_PERIODS";
+    public const string IncorrectUsernameOrPassword = "INCORECT_USERNAME_OR_PASSWORD";
 }
