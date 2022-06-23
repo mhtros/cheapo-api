@@ -12,7 +12,7 @@ public static class HttpExtensions
         int totalItems, int totalPages)
     {
         var paginationHeaders = new PaginationHeader(currentPage, itemsPerPage, totalItems, totalPages);
-        var options = new JsonSerializerOptions {PropertyNamingPolicy = JsonNamingPolicy.CamelCase};
+        var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
 
         response.Headers.Add("Pagination", JsonSerializer.Serialize(paginationHeaders, options));
         response.Headers.Add("Access-Control-Expose-Headers", "Pagination");

@@ -1,0 +1,22 @@
+@base_uri = https://localhost:7080/api/v1
+@access_token = {{signinRequest.response.body.data.accessToken}}
+
+###
+# @name signinRequest 
+POST {{base_uri}}/authentication/signin HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "",
+  "password": ""
+}
+
+###
+ 
+@period =
+@date1 =
+@date2 =
+
+GET {{base_uri}}/compare/{{period}}/{{date1}}/{{date2}} HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{access_token}}

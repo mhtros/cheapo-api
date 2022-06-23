@@ -38,7 +38,7 @@ public static class ModelBuilderExtensions
         if (categories == null) yield break;
 
         foreach (var category in AssignIds(categories))
-            yield return (ApplicationTransactionCategory) category;
+            yield return (ApplicationTransactionCategory)category;
     }
 
     private static IEnumerable<IDistinctable<string>> AssignIds(IEnumerable<IDistinctable<string>> records)
