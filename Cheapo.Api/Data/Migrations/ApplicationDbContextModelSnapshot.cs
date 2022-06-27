@@ -53,7 +53,7 @@ namespace Cheapo.Api.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("ApplicationInternalErrors");
+                    b.ToTable("ApplicationInternalErrors", (string)null);
                 });
 
             modelBuilder.Entity("Cheapo.Api.Entities.ApplicationTransaction", b =>
@@ -96,7 +96,7 @@ namespace Cheapo.Api.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ApplicationTransactions");
+                    b.ToTable("ApplicationTransactions", (string)null);
                 });
 
             modelBuilder.Entity("Cheapo.Api.Entities.ApplicationTransactionCategory", b =>
@@ -115,7 +115,7 @@ namespace Cheapo.Api.Data.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ApplicationTransactionCategories");
+                    b.ToTable("ApplicationTransactionCategories", (string)null);
 
                     b.HasData(
                         new

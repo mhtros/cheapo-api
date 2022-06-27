@@ -1,71 +1,94 @@
 ﻿[
   {
-    "Name": "Uncategorized"
-  },
-  {
-    "Name": "Housing"
-  },
-  {
-    "Name": "Transportation"
-  },
-  {
-    "Name": "Food"
-  },
-  {
-    "Name": "Utilities"
-  },
-  {
-    "Name": "Clothing"
-  },
-  {
-    "Name": "Medical/Health Care"
-  },
-  {
-    "Name": "Insurance"
-  },
-  {
-    "Name": "Household Supplies"
-  },
-  {
-    "Name": "Personal"
-  },
-  {
-    "Name": "Debt"
-  },
-  {
-    "Name": "Retirement"
-  },
-  {
-    "Name": "Education"
-  },
-  {
+    "Id": "000fdde1-1a6e-4179-add7-a8009419bc24",
     "Name": "Savings"
   },
   {
-    "Name": "Gift/Donations"
-  },
-  {
-    "Name": "Entertainment"
-  },
-  {
+    "Id": "01b02939-6d26-478d-8f6a-b75bde269e3c",
     "Name": "Travel"
   },
   {
-    "Name": "Pets"
+    "Id": "12cce3da-c984-4fe0-af52-0e2844f444b1",
+    "Name": "Debt"
   },
   {
-    "Name": "Kids"
+    "Id": "29f8bddc-c8b8-4fc1-bc25-1c4a70669a3f",
+    "Name": "Household Supplies"
   },
   {
-    "Name": "Technology"
-  },
-  {
-    "Name": "Bank"
-  },
-  {
+    "Id": "30981d26-1607-45b0-b76d-946c88faf600",
     "Name": "Payroll"
   },
   {
+    "Id": "3a45d2ab-5cc0-4092-8ba1-2864b3ebaf6a",
+    "Name": "Food"
+  },
+  {
+    "Id": "5b9975e3-345b-4729-82b6-fdc2b84cc028",
+    "Name": "Uncategorized"
+  },
+  {
+    "Id": "67d37e84-6818-4b0e-8872-078f0d535295",
     "Name": "Other"
+  },
+  {
+    "Id": "72b85f9b-c426-4deb-b0a6-2a5e2c688f22",
+    "Name": "Entertainment"
+  },
+  {
+    "Id": "738b9999-6c63-4766-8565-14ffb7f6f30e",
+    "Name": "Education"
+  },
+  {
+    "Id": "76ba3529-d7cf-4fde-a7e3-756ba3cc7f3c",
+    "Name": "Medical/Health Care"
+  },
+  {
+    "Id": "7867c6e5-ce52-4368-97a6-e4b6c778a4a0",
+    "Name": "Pets"
+  },
+  {
+    "Id": "790d6e9e-a376-45ff-85ae-2452ad1c3ada",
+    "Name": "Transportation"
+  },
+  {
+    "Id": "8816e5fa-2806-4701-835c-722c2e3f5294",
+    "Name": "Technology"
+  },
+  {
+    "Id": "8d9d2e1d-440d-4434-addc-980d6fca7fe1",
+    "Name": "Housing"
+  },
+  {
+    "Id": "8ff9c99d-0b69-417f-8aa9-d04d96141515",
+    "Name": "Insurance"
+  },
+  {
+    "Id": "93738cce-16b9-4821-bb76-92a04d611945",
+    "Name": "Clothing"
+  },
+  {
+    "Id": "9b8252f1-62f4-4c8a-8600-7e5fad11cec3",
+    "Name": "Retirement"
+  },
+  {
+    "Id": "a29dde8a-7bf7-4017-a96e-1efbcb481038",
+    "Name": "Kids"
+  },
+  {
+    "Id": "bbae6634-6cde-41ca-92ab-7644bbd1f63d",
+    "Name": "Bank"
+  },
+  {
+    "Id": "c849dde7-21e3-4a2e-b9c6-3806e6a501cb",
+    "Name": "Gift/Donations"
+  },
+  {
+    "Id": "eff99fcd-08a8-45f7-af47-2cb19a61f2cf",
+    "Name": "Personal"
+  },
+  {
+    "Id": "feeb31c7-9eca-4a27-b7fa-7702202fbe81",
+    "Name": "Utilities"
   }
 ]

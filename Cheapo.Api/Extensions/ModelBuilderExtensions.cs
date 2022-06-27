@@ -34,11 +34,7 @@ public static class ModelBuilderExtensions
     {
         var json = File.ReadAllText("Data/Seed/transaction-categories.json");
         var categories = JsonSerializer.Deserialize<IEnumerable<ApplicationTransactionCategory>>(json);
-
-        if (categories == null) yield break;
-
-        foreach (var category in AssignIds(categories))
-            yield return (ApplicationTransactionCategory)category;
+        return categories ?? Array.Empty<ApplicationTransactionCategory>();
     }
 
     private static IEnumerable<IDistinctable<string>> AssignIds(IEnumerable<IDistinctable<string>> records)
