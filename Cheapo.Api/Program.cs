@@ -1,5 +1,7 @@
+using Cheapo.Api.Data;
 using Cheapo.Api.Extensions.Services;
 using Cheapo.Api.Middlewares;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
@@ -59,5 +61,19 @@ app.UseEndpoints(endpoint =>
     endpoint.MapControllers();
     endpoint.MapFallbackToController("Index", "Fallback");
 });
+
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+try
+{
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    await context.Database.MigrateAsync();
+}
+catch (Exception ex)
+{
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, "An error occurred during migration");
+}
 
 app.Run();
