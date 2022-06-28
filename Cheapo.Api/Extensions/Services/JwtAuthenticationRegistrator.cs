@@ -15,7 +15,18 @@ public static class JwtAuthenticationRegistrator
     /// <param name="configuration"><see cref="IConfiguration" />.</param>
     public static void AddJwtAuthenticationService(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtParameters = configuration.GetSection("JwtParameters").Get<JwtParameters>();
+        var jwtParameters = new JwtParameters
+        {
+            Audience = configuration.GetSection("Audience").Get<string>(),
+            Issuer = configuration.GetSection("Issuer").Get<string>(),
+            ValidateAudience = configuration.GetSection("ValidateAudience").Get<bool>(),
+            ValidateIssuer = configuration.GetSection("ValidateIssuer").Get<bool>(),
+            ValidateLifetime = configuration.GetSection("ValidateLifetime").Get<bool>(),
+            IssuerSigningKey = configuration.GetSection("IssuerSigningKey").Get<string>(),
+            RequireExpirationTime = configuration.GetSection("RequireExpirationTime").Get<bool>(),
+            ValidateIssuerSigningKey = configuration.GetSection("ValidateIssuerSigningKey").Get<bool>(),
+        };
+
         services.AddScoped<IJwtParameters, JwtParameters>(_ => jwtParameters);
 
         services.AddAuthentication(options =>

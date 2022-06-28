@@ -26,8 +26,16 @@ public static class DependencyInjectionRegistrator
         services.AddScoped<IApplicationTransactionRepository, ApplicationTransactionRepository>();
 
         // Singleton - lifetime services are created the first time they are requested
-        // and then every subsequent request will use the same instance
-        var emailSettings = configuration.GetSection("EmailSettings").Get<EmailSettings>();
+        // and then every subsequent request will use the same instance.
+        var emailSettings = new EmailSettings
+        {
+            From = configuration.GetSection("From").Get<string>(),
+            Password = configuration.GetSection("Password").Get<string>(),
+            Port = configuration.GetSection("Port").Get<int>(),
+            Username = configuration.GetSection("Username").Get<string>(),
+            SmtpServer = configuration.GetSection("SmtpServer").Get<string>()
+        };
+
         services.AddSingleton(emailSettings);
     }
 }
