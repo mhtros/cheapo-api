@@ -1,6 +1,11 @@
-﻿namespace Cheapo.Api.Controllers;
+﻿using Microsoft.AspNetCore.Mvc;
 
-public class FallbackController
+namespace Cheapo.Api.Controllers;
+
+public class FallbackController : Controller
 {
-    
+    public ActionResult Index()
+    {
+        return PhysicalFile(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "index.html"), "text/html");
+    }
 }

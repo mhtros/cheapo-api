@@ -33,19 +33,31 @@ app.UseMiddleware<InternalErrorHandler>();
 
 app.UseHttpsRedirection();
 
-app.UseCors(policyBuilder =>
-{
-    policyBuilder
-        .AllowAnyHeader()
-        .AllowAnyMethod()
-        .AllowCredentials()
-        .WithOrigins(configuration.GetSection("ClientUri").Get<string>());
-});
+app.UseRouting();
+
+app.UseCors();
+
+// app.UseCors(policyBuilder =>
+// {
+//     policyBuilder
+//         .AllowAnyHeader()
+//         .AllowAnyMethod()
+//         .AllowCredentials()
+//         .WithOrigins(configuration.GetSection("ClientUri").Get<string>());
+// });
 
 app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseDefaultFiles();
+
+app.UseStaticFiles();
+
+app.UseEndpoints(endpoint =>
+{
+    endpoint.MapControllers();
+    endpoint.MapFallbackToController("Index", "Fallback");
+});
 
 app.Run();
